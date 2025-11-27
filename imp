@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanjeevani - Doctor Profile</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Styles for Profile Page Aesthetics */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; 
+        }
+        /* Style for the back button */
+        .btn-back {
+            @apply bg-orange-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors duration-200 shadow-md flex items-center space-x-2;
+        }
+        /* Style for the primary action button */
+        .btn-primary-action {
+            @apply bg-green-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg hover:bg-green-700 transition-colors duration-200;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- 1. Header and Navigation -->
+    <header class="bg-white shadow-lg sticky top-0 z-20">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            
+            <!-- Title -->
+            <div class="flex items-center space-x-3">
+                <h1 class="text-3xl font-extrabold text-blue-800">Doctor Profile</h1>
+            </div>
+
+            <!-- Back Button -->
+            <a href="/department_doctors.html" class="btn-back">
+                <!-- Back Arrow SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>Go Back</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- 2. Main Content Layout -->
+    <main class="flex-grow container mx-auto px-6 py-8">
+        
+        <div class="w-full max-w-5xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
+            
+            <!-- Profile Header Section -->
+            <div class="bg-gradient-to-r from-blue-600 to-blue-800 p-8 text-white flex flex-col md:flex-row items-center space-x-6">
+                <!-- Profile Image Placeholder (Modern Look) -->
+                <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl flex-shrink-0">
+                    <!-- Placeholder image URL for a doctor profile -->
+                    <img src="https://placehold.co/128x128/FFFFFF/3B82F6?text=Dr+MNOP" alt="Doctor Profile" class="w-full h-full object-cover">
+                </div>
+                
+                <!-- Title and Credentials -->
+                <div class="mt-4 md:mt-0 text-center md:text-left">
+                    <h2 class="text-4xl font-extrabold">Dr. MNOP</h2>
+                    <p class="text-xl font-light mb-1">MBBS, MD (General Medicine), DM (Medical Oncology)</p>
+                    <p class="text-lg font-semibold text-orange-300">Leading Medical Oncologist</p>
+                    <div class="flex justify-center md:justify-start items-center space-x-1 mt-2">
+                        <!-- Star Rating -->
+                        <span class="text-yellow-400">★★★★★</span>
+                        <span class="text-sm font-medium">(4.9/5 based on 850 reviews)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Details and Actions -->
+            <div class="p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Left Column: Key Information & Description -->
+                <div class="lg:col-span-2 space-y-8">
+                    
+                    <!-- Expertise & Experience -->
+                    <div class="p-6 bg-gray-50 rounded-xl border border-gray-200">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Experience & Specialization</h3>
+                        
+                        <div class="grid grid-cols-2 gap-4 text-lg">
+                            <div>
+                                <p class="text-gray-500">Overall Experience</p>
+                                <p class="font-bold text-blue-700">20 Years</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Specialist Experience</p>
+                                <p class="font-bold text-blue-700">11 Years</p>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-gray-500">Department</p>
+                                <p class="font-bold text-orange-600">Medical Oncology</p>
+                            </div>
+                        </div>
+
+                        <h4 class="text-xl font-semibold text-gray-800 mt-6 mb-3">Key Expertise Areas:</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <!-- Expertise Badges -->
+                            <span class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full">Chemotherapy</span>
+                            <span class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full">Immunotherapy</span>
+                            <span class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full">Pediatric Oncology</span>
+                            <span class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full">Precision Medicine</span>
+                        </div>
+                    </div>
+                    
+                    <!-- About Me -->
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-orange-500 pb-1">About Dr. MNOP</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            Dr. MNOP is a highly respected Medical Oncologist with 20 years of dedication to patient care. He completed his super-specialization (DM) at a premier institute in India and is renowned for his patient-centric approach and commitment to utilizing cutting-edge treatments like personalized genomics and targeted therapies. His goal is to provide comprehensive, holistic, and compassionate care to patients battling complex cancer diagnoses.
+                        </p>
+                    </div>
+
+                    <!-- Location & Awards (Mock Data) -->
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-orange-500 pb-1">Awards & Recognition</h3>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
+                            <li>"Excellence in Oncology Research" - National Medical Council (2022)</li>
+                            <li>"Top 50 Oncologists in Asia" - HealthTech Magazine (2021)</li>
+                            <li>Recipient of the Gold Medal for highest scores in MD Medicine.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <!-- Right Column: Actions and Contact -->
+                <div class="lg:col-span-1 space-y-6">
+                    
+                    <!-- Contact Card -->
+                    <div class="p-6 bg-blue-50 rounded-xl shadow-md">
+                        <h4 class="text-xl font-bold text-blue-800 mb-3">Contact Information</h4>
+                        <p class="text-gray-700"><span class="font-semibold">Clinic:</span> Sanjeevani Main Hospital</p>
+                        <p class="text-gray-700"><span class="font-semibold">Phone:</span> (555) 123-4567</p>
+                        <p class="text-gray-700"><span class="font-semibold">Email:</span> dr.mnop@sanjeevani.com</p>
+                    </div>
+
+                    <!-- Action Button -->
+                    <div class="p-6 bg-white rounded-xl shadow-lg border border-gray-200">
+                        <h4 class="text-xl font-bold text-gray-800 mb-4">Ready to Consult?</h4>
+                        
+                        <!-- Link to Check Availability -->
+                        <a href="/doctor-avail" class="btn-primary-action w-full text-center block">
+                            Check Availability & Book Slot
+                        </a>
+                    </div>
+                    
+                </div>
+            </div>
+
+        </div>
+        
+    </main>
+
+    <!-- 3. Footer (Consistent with other pages) -->
+    <footer class="bg-gray-800 text-white py-6 mt-8">
+        <div class="container mx-auto px-6 text-center text-sm text-gray-400">
+            &copy; 2023 Sanjeevani Hospital Management. All rights reserved. | Doctor Profile
+        </div>
+    </footer>
+
+</body>
+</html>
+
+
+
+
+

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JNU Health Center- Doctor's Availability</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Styles for Availability Page Aesthetics */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; 
+        }
+        /* Style for the back button */
+        .btn-back {
+            @apply bg-orange-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors duration-200 shadow-md flex items-center space-x-2;
+        }
+        /* Style for active time slots */
+        .slot-button {
+            @apply bg-blue-100 text-blue-800 font-medium px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors duration-150 border border-blue-300;
+        }
+        /* Style for selected time slot */
+        .slot-selected {
+            @apply bg-orange-600 text-white border-orange-700 shadow-lg;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- 1. Header and Navigation -->
+    <header class="bg-white shadow-lg sticky top-0 z-20">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            
+            <!-- Title -->
+            <div class="flex items-center space-x-3">
+                <h1 class="text-3xl font-extrabold text-blue-800">Doctor's Availability</h1>
+            </div>
+
+            <!-- Back Button -->
+            <a href="/department_doctors.html" class="btn-back">
+                <!-- Back Arrow SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>Go Back</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- 2. Main Content Layout -->
+    <main class="flex-grow flex items-start justify-center p-8">
+        
+        <div class="w-full max-w-5xl bg-white p-8 rounded-xl shadow-2xl border-t-4 border-orange-500">
+            
+            <!-- Doctor Info Card -->
+            <div class="flex items-center space-x-6 mb-8 border-b pb-6 border-gray-200">
+                <!-- Profile Picture Placeholder -->
+                <img src="https://placehold.co/100x100/3B82F6/FFFFFF?text=Dr" alt="Doctor Profile" class="rounded-full h-20 w-20 object-cover border-4 border-blue-300">
+                
+                <div>
+                    <!-- NOTE: Replace with dynamic doctor data (e.g., Dr. Akhilesh from Oncology) -->
+                    <h2 class="text-3xl font-bold text-gray-900">Dr. Akhilesh</h2>
+                    <p class="text-lg text-gray-600">Oncologist | 20+ Years Experience</p>
+                    <p class="text-sm text-green-600 font-semibold mt-1">Status: Available for Booking</p>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">Select a Date and Time Slot</h3>
+
+            <!-- Availability Calendar/Scheduler -->
+            <form action="/doctor-avail" method="POST">
+
+                <!-- Date Selection (Horizontal Scrollable) -->
+                <div class="flex space-x-4 overflow-x-auto pb-4 mb-8 border-b border-gray-200">
+                    <button type="button" class="bg-blue-600 text-white font-semibold p-3 rounded-xl shadow-md flex-shrink-0">
+                        Today <br> 10/11
+                    </button>
+                    <button type="button" class="bg-gray-100 text-gray-700 font-semibold p-3 rounded-xl shadow-md flex-shrink-0 hover:bg-gray-200">
+                        Wed <br> 11/11
+                    </button>
+                    <button type="button" class="bg-gray-100 text-gray-700 font-semibold p-3 rounded-xl shadow-md flex-shrink-0 hover:bg-gray-200">
+                        Thu <br> 12/11
+                    </button>
+                    <button type="button" class="bg-gray-100 text-gray-700 font-semibold p-3 rounded-xl shadow-md flex-shrink-0 hover:bg-gray-200">
+                        Fri <br> 13/11
+                    </button>
+                    <button type="button" class="bg-gray-100 text-gray-700 font-semibold p-3 rounded-xl shadow-md flex-shrink-0 hover:bg-gray-200">
+                        Mon <br> 16/11
+                    </button>
+                    <button type="button" class="bg-gray-100 text-gray-700 font-semibold p-3 rounded-xl shadow-md flex-shrink-0 hover:bg-gray-200">
+                        Tue <br> 17/11
+                    </button>
+                    <button type="button" class="bg-gray-100 text-gray-700 font-semibold p-3 rounded-xl shadow-md flex-shrink-0 hover:bg-gray-200">
+                        Wed <br> 18/11
+                    </button>
+                </div>
+
+                <!-- Time Slot Selection (Grouped by Day Part) -->
+                
+                <!-- Morning Slots -->
+                <div class="mb-8">
+                    <h4 class="text-xl font-semibold text-blue-700 mb-3 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        Morning (9:00 AM - 1:00 PM)
+                    </h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        <!-- Example available slots. Clicking selects it (handled by JS below) -->
+                        <button type="button" class="slot-button" data-slot="9:00 AM">9:00 AM</button>
+                        <button type="button" class="slot-button" data-slot="9:30 AM">9:30 AM</button>
+                        <button type="button" class="slot-button" data-slot="10:00 AM">10:00 AM</button>
+                        <button type="button" class="slot-button" data-slot="10:30 AM">10:30 AM</button>
+                        <!-- Example unavailable slot (styled differently) -->
+                        <button type="button" class="bg-red-100 text-red-500 line-through px-4 py-2 rounded-lg cursor-not-allowed" disabled>11:00 AM</button>
+                        <button type="button" class="slot-button" data-slot="11:30 AM">11:30 AM</button>
+                    </div>
+                </div>
+
+                <!-- Afternoon Slots -->
+                <div class="mb-8">
+                    <h4 class="text-xl font-semibold text-blue-700 mb-3 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Afternoon (2:00 PM - 5:00 PM)
+                    </h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        <button type="button" class="slot-button" data-slot="2:00 PM">2:00 PM</button>
+                        <button type="button" class="slot-button" data-slot="2:30 PM">2:30 PM</button>
+                        <button type="button" class="slot-button" data-slot="3:00 PM">3:00 PM</button>
+                        <button type="button" class="slot-button" data-slot="3:30 PM">3:30 PM</button>
+                    </div>
+                </div>
+                
+                <!-- Hidden input to store selected slot data -->
+                <input type="hidden" id="selected-slot" name="selected_slot" required>
+
+                <!-- Confirmation Button -->
+                <div class="text-center pt-6">
+                    <button type="submit" id="book-button" class="bg-green-600 text-white font-bold px-10 py-3 rounded-xl shadow-lg hover:bg-green-700 transition-colors duration-200" disabled>
+                        Book Appointment (Select a Slot Above)
+                    </button>
+                </div>
+                
+            </form>
+        </div>
+        
+    </main>
+    
+    <!-- 3. Footer (Consistent with other pages) -->
+    <footer class="bg-gray-800 text-white py-6 mt-8">
+        <div class="container mx-auto px-6 text-center text-sm text-gray-400">
+            &copy; 2023 JNU Health Center. All rights reserved. | Doctor Availability
+        </div>
+    </footer>
+
+    <!-- JavaScript for Slot Selection Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slotButtons = document.querySelectorAll('.slot-button');
+            const selectedSlotInput = document.getElementById('selected-slot');
+            const bookButton = document.getElementById('book-button');
+            
+            slotButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const slotValue = button.getAttribute('data-slot');
+
+                    // 1. Deselect all other buttons
+                    slotButtons.forEach(btn => btn.classList.remove('slot-selected'));
+
+                    // 2. Select the clicked button
+                    button.classList.add('slot-selected');
+                    
+                    // 3. Update the hidden input value
+                    selectedSlotInput.value = slotValue;
+
+                    // 4. Enable and update the booking button text
+                    bookButton.disabled = false;
+                    bookButton.textContent = `Book Appointment for ${slotValue}`;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

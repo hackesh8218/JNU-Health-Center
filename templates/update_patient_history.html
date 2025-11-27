@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JNU Health Center - Update Patient Data</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Styles for Form Aesthetics */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; 
+        }
+        /* Style for the back button */
+        .btn-back {
+            @apply bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md flex items-center space-x-2;
+        }
+        /* Style for the submit button (Accent Color) */
+        .btn-submit {
+            @apply bg-orange-600 text-white font-bold px-8 py-3 rounded-lg hover:bg-orange-700 transition-colors duration-200 shadow-lg;
+        }
+        /* Custom form group margin */
+        .form-group {
+            @apply mb-5;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- 1. Header and Navigation -->
+    <header class="bg-white shadow-lg sticky top-0 z-20">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            
+            <!-- Title -->
+            <div class="flex items-center space-x-3">
+                <h1 class="text-3xl font-extrabold text-blue-800">Update Patient History</h1>
+            </div>
+
+            <!-- Back Button (Assuming Doctor or Admin is using this) -->
+            <a href="/doctor-dash" class="btn-back">
+                <!-- Back Arrow SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- 2. Main Content Layout -->
+    <main class="flex-grow flex items-start justify-center p-8">
+        
+        <div class="w-full max-w-4xl bg-white p-8 rounded-xl shadow-2xl border-t-4 border-blue-600">
+            
+            <!-- Patient Context -->
+            <div class="mb-8 border-b pb-4 border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-700 mb-2">Patient Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg">
+                    <h6 class="font-medium text-gray-800">Patient Name: <span class="font-semibold text-orange-600">Mr. Akhilesh</span></h6>
+                    <h6 class="font-medium text-gray-800">Department: <span class="font-semibold text-blue-600">Cardiology</span></h6>
+                </div>
+            </div>
+
+            <!-- Update Form -->
+            <form action="" method="post" class="space-y-6">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
+                    
+                    <!-- Visit Type -->
+                    <div class="form-group">
+                        <label for="visit-type" class="block text-sm font-medium text-gray-700 mb-1">Visit Type</label>
+                        <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                               id="visit-type" name="visit-type" placeholder="e.g., In-person, Teleconsultation" required>
+                    </div>
+                    
+                    <!-- Test Done -->
+                    <div class="form-group">
+                        <label for="test-done" class="block text-sm font-medium text-gray-700 mb-1">Test Done</label>
+                        <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                               id="test-done" name="test-done" placeholder="e.g., ECG, Blood Test, X-Ray">
+                    </div>
+
+                    <!-- Diagnosis -->
+                    <div class="form-group">
+                        <label for="diagnosis" class="block text-sm font-medium text-gray-700 mb-1">Diagnosis</label>
+                        <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                               id="diagnosis" name="diagnosis" placeholder="e.g., Mild hypertension, Viral fever" required>
+                    </div>
+
+                    <!-- Medicines -->
+                    <div class="form-group">
+                        <label for="medicines" class="block text-sm font-medium text-gray-700 mb-1">Medicines</label>
+                        <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                               id="medicines" name="medicines" placeholder="e.g., Paracetamol (500mg), Amoxicillin (250mg)">
+                    </div>
+                    
+                    <!-- Prescription (Full width row) -->
+                    <div class="form-group md:col-span-2">
+                        <label for="prescription" class="block text-sm font-medium text-gray-700 mb-1">Prescription / Notes</label>
+                        <textarea class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 h-32"
+                                  id="prescription" name="prescription" placeholder="Detailed advice, next steps, or dietary recommendations."></textarea>
+                    </div>
+
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="text-center pt-6">
+                    <input type="submit" class="btn-submit" value="Create/Update Record">
+                </div>
+                
+            </form>
+        </div>
+        
+    </main>
+    
+    <!-- 3. Footer (Consistent with other pages) -->
+    <footer class="bg-gray-800 text-white py-6 mt-8">
+        <div class="container mx-auto px-6 text-center text-sm text-gray-400">
+            &copy; 2023 JNU Health Center. All rights reserved. | Patient Data Update
+        </div>
+    </footer>
+
+</body>
+</html>

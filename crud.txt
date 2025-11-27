@@ -1,0 +1,68 @@
+#create database 
+python 
+>>> from app import *
+>>> db.create_all()
+
+
+#create record 
+>>> user1=User(name="admin" , email="admin8218@gmail.com",password="admin@8218", role="admin")
+>>> db.session.add(user1)
+>>> db.session.commit()
+
+
+#patient 
+>>> from app import *
+>>> user1=User(name="Sohan" , email="sohan8218@gmail.com",password="sohan@8218", role="patient")
+>>> db.session.add(user1)
+>>> db.session.commit()
+>>> user2=User(name="Manoj" , email="manoj8218@gmail.com",password="manoj@8218", role="p
+atient") 
+>>> db.session.add(user2)                                                               
+>>> db.session.commit() 
+
+
+#update of the record 
+>>> user3=User.query.filter_by(name="Manoj").first()     
+>>> user3
+<User 3 - patient>
+>>> user3.name="Anuj" 
+>>> db.session.commit()
+>>> user3.email="rahul8218@gmail.com"
+>>> db.session.commit()
+>>> user3.email="anuj8218@gmail.com"  
+>>> db.session.commit()
+>>> user3.password="anuj@8218"
+>>> db.session.commit()   
+
+
+#deleting the entry 
+>>> u1=User.query.get(3)
+<stdin>-19:1: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+u1=User.query.get(3)
+  #this is the special which  read the id speacial
+>>> db.session.delete(u1)
+>>> db.session.commit()
+
+#fetching the data
+>>> users=User.query.all()
+>>> users
+[<User 1 - admin>, <User 2 - patient>, <User 3 - patient>]
+>>> users[0]
+<User 1 - admin>
+>>> u1=users[0]
+>>> u1
+<User 1 - admin>
+>>> u1.name
+'admin'
+>>> users[1].name
+'Sohan'
+
+#exiting the terminal 
+>>> exit()
+
+
+#for hashing the password
+from werkzeug.security import generate_password_hash
+
+hashed_password = generate_password_hash(password)
+user = User(name=name, email=email, password=hashed_password, role='patient')

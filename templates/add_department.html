@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JNU Health Center - Add New Department</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Styles for Form Aesthetics */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; 
+        }
+        /* Style for the back button */
+        .btn-back {
+            @apply bg-orange-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors duration-200 shadow-md flex items-center space-x-2;
+        }
+        /* Style for the submit button (Primary Admin Action - Blue) */
+        .btn-submit {
+            @apply bg-blue-600 text-white font-bold px-10 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-xl;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Flash Messages Area -->
+    <div class="fixed top-4 right-4 z-50 space-y-2 w-80">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="p-4 rounded-lg shadow-md text-white font-semibold 
+                        {% if category == 'danger' or category == 'warning' %} bg-red-500 
+                        {% elif category == 'success' %} bg-green-500 
+                        {% else %} bg-blue-500 {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- 1. Header and Navigation -->
+    <header class="bg-white shadow-lg sticky top-0 z-20">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Title -->
+            <div class="flex items-center space-x-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13h16a1 1 0 011 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1v-4a1 1 0 011-1z" /></svg>
+                <h1 class="text-3xl font-extrabold text-blue-800">New Department Setup</h1>
+            </div>
+
+            <!-- Back Button -->
+            <a href="{{ url_for('admin_dash') }}" class="btn-back">
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- 2. Main Content Layout -->
+    <main class="flex-grow flex items-start justify-center p-8">
+        
+        <div class="w-full max-w-2xl bg-white p-10 rounded-xl shadow-2xl border-t-4 border-blue-600">
+            
+            <p class="text-center text-gray-600 mb-8">Enter the details for the new medical department.</p>
+
+            <!-- Registration Form (Action points to the current route for POST handling) -->
+            <form action="{{ url_for('add_department') }}" method="POST" class="space-y-6">
+                
+                <!-- Department Name -->
+                <div>
+                    <label for="name" class="block text-lg font-semibold text-gray-800 mb-2">Department Name (e.g., Cardiology)</label>
+                    <input type="text" class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-200 focus:border-blue-600 transition duration-150 shadow-sm"
+                           id="name" name="name" placeholder="Enter full department name" required>
+                </div>
+                
+                <!-- Description -->
+                <div>
+                    <label for="description" class="block text-lg font-semibold text-gray-800 mb-2">Department Description (Optional)</label>
+                    <textarea class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-200 focus:border-blue-600 transition duration-150 shadow-sm h-32"
+                              id="description" name="description" placeholder="A brief summary of the services offered by this department."></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center pt-6">
+                    <input type="submit" class="btn-submit" value="Create Department">
+                </div>
+                
+            </form>
+            
+        </div>
+        
+    </main>
+    
+    <!-- 3. Footer (Consistent with other pages) -->
+    <footer class="bg-gray-800 text-white py-6 mt-8">
+        <div class="container mx-auto px-6 text-center text-sm text-gray-400">
+            &copy; 2023 JNU Health Center. All rights reserved. | Admin Department Setup
+        </div>
+    </footer>
+
+</body>
+</html>

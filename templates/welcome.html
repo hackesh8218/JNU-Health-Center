@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JNU Health Centre - Welcome</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        .section-card {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Header specific styles to mimic the image */
+        .header-bg {
+            background-image: linear-gradient(to right, #4CAF50, #2196F3);
+            background-size: cover;
+            background-position: center;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+        }
+        .header-logo {
+            height: 80px;
+            width: 80px;
+            margin-right: 20px;
+            border-radius: 50%; 
+            object-fit: cover;
+        }
+        .header-text h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+        .header-text p {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+
+        /* Ambulance box styling */
+        .ambulance-box {
+            background-color: #dc2626; /* Red background */
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Carousel/Blob styles (kept for reference, although carousel removed) */
+        .carousel-container, .animate-blob { display: none; }
+        .carousel-wrapper {
+            display: flex;
+            width: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+        .carousel-item {
+            flex-shrink: 0;
+            width: 100%;
+            height: 400px; /* Fixed height for consistency */
+            object-fit: cover;
+            border-radius: 0.5rem;
+        }
+        
+        /* --- Notices Marquee Styles --- */
+        .notices-marquee-container {
+            height: 300px; /* Fixed display height */
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Keyframes for vertical scrolling */
+        @keyframes scroll-up {
+            0% { transform: translateY(0%); }
+            100% { transform: translateY(-100%); }
+        }
+
+        /* Blinking animation for new notices */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .animate-blink {
+            animation: blink 1s step-start infinite;
+        }
+        #image-carousel-wrapper {
+          display: flex;
+          width: max-content;
+          animation: scrollCarousel 12s linear infinite;
+          }
+
+          .carousel-item {
+              width: 100%;
+              flex-shrink: 0;
+              border-radius: 10px;
+          }
+
+          /* Auto-scroll animation */
+          @keyframes scrollCarousel {
+              0% { transform: translateX(0); }
+              20% { transform: translateX(-100%); }
+              40% { transform: translateX(-200%); }
+              60% { transform: translateX(-300%); }
+              80% { transform: translateX(-400%); }
+              100% { transform: translateX(-500%); }
+          }
+
+        
+    </style>
+</head>
+<body class="font-sans antialiased bg-gray-50">
+
+    <header class="header-bg shadow-md">
+        <div class="container mx-auto flex items-center">
+            <img src="/static/uploads/JNUlogo.jpeg" alt="JNU Logo" class="header-logo" />
+            <div class="header-text">
+                <h1>JNU Health Centre</h1>
+                <p>Online Specialist Consultations & Part Time Psychology Services</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sticky Navigation and Ambulance Info -->
+    <div class="bg-white shadow-lg sticky top-0 z-10 p-3 border-b border-gray-200">
+        <div class="container mx-auto flex justify-between items-center">
+            
+            <!-- Ambulance Contact (Left Side) -->
+            <div class="ambulance-box flex flex-col items-start space-y-0.5 text-center">
+                <span class="font-bold text-lg leading-none">AMBULANCE</span>
+                <span class="text-sm font-medium leading-none">9971728866</span>
+                <span class="text-sm font-medium leading-none">9971728877</span>
+            </div>
+
+            <!-- Login/Registration Buttons (Right Side) -->
+            <nav class="flex items-center space-x-2">
+                <a href="/login" class="bg-blue-600 text-white px-3 py-1.5 text-sm rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Patient Login</a>
+                <a href="/register" class="bg-blue-600 text-white px-3 py-1.5 text-sm rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Patient Register</a>
+                <a href="/doctor-login" class="bg-orange-600 text-white px-3 py-1.5 text-sm rounded-lg hover:bg-orange-700 transition duration-300 shadow-md">Doctor Login</a>
+                <a href="/admin-login" class="bg-gray-600 text-white px-3 py-1.5 text-sm rounded-lg hover:bg-gray-700 transition duration-300 shadow-md">Admin Login</a>
+            </nav>
+        </div>
+    </div>
+    
+    <!-- Main Content Area - Informational Sections -->
+    <main class="container mx-auto px-6 py-12 space-y-12">
+      
+      
+                    
+           <section class="bg-gradient-to-r from-indigo-50 to-blue-100 py-16 rounded-xl shadow-xl">
+            <div class="flex flex-col md:flex-row items-center justify-between px-6">
+                <div class="md:w-1/2 text-center md:text-left mb-10 md:mb-0">
+                    <h1 class="text-5xl font-extrabold text-blue-900 leading-tight">
+                        JNU Health Centre
+                    </h1>
+                    <p class="mt-4 text-xl font-semibold text-orange-600">
+                        Serving the JNU Community, New Delhi
+                    </p>
+                    <p class="mt-6 text-lg text-gray-700">
+                        The JNU Health Centre, established in 1973, serves as the primary medical care unit for students residing on the campus in New Delhi, focusing on comprehensive health services including preventive, curative, and promotive care. Located southwest of Ganga Hostel, the Centre is staffed by a dedicated team comprising a Chairperson, Chief Medical Officer (CMO), Medical Officers, nurses, and various specialists covering areas like Internal Medicine, Psychiatry, Cardiology, and Dentistry. The facility provides essential benefits such as free medicines to students, routine laboratory tests, and access to an OPD (with compulsory registration) operating in both morning and evening shifts. Additionally, the Centre ensures the safety of resident students with 24-hour ICU and Patient Transport Ambulance services, although specific services like advanced dental work and employment medical certifications are not covered.
+                    </p>
+                </div>
+                <div class="md:w-1/2 flex justify-center relative">
+                    <img src="/static/uploads/JNUhealth.jpg" alt="Health Centre Building" class="max-w-full h-auto rounded-lg shadow-xl border-4 border-white">
+                </div>
+            </div>
+        </section>
+
+        <!-- Informational Cards (Based on User's Text) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <!-- 1. Mission and Coverage -->
+            <div class="section-card border-t-4 border-blue-500">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4 flex items-center">
+                    <svg class="h-6 w-6 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.242a2.24 2.24 0 010 3.181L10.99 18.232a2.24 2.24 0 01-3.18 0L3.382 13.918a2.24 2.24 0 010-3.181l1.597-1.597 1.597-1.597z"/></svg>
+                    Mission & Services
+                </h3>
+                <p class="text-gray-700 mb-3"> The mission of the JNU Health Centre is to provide <strong>basic, preventive, and curative healthcare services</strong> to all students in a convenient and accessible manner. The Centre aims to ensure the well-being of students by offering essential medical support within the campus. </p> <p class="text-gray-700"> Curative services for University employees are provided separately through the <strong>CGHS dispensary</strong>. </p>
+                <ul class="list-disc ml-6 text-gray-700 leading-relaxed"> <li>General medical consultation for students</li> <li>Preventive care and routine health check-ups</li> <li>Basic diagnostic tests</li> <li>Primary treatment and first-aid services</li> <li>Referral to CGHS or hospitals when needed</li> </ul>
+
+            </div>
+
+            <!-- 2. Location & Staff -->
+            <div class="section-card border-t-4 border-orange-500">
+                <h3 class="text-2xl font-bold text-orange-800 mb-4 flex items-center">
+                    <svg class="h-6 w-6 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Location & Administration
+                </h3>
+                <p class="font-semibold text-gray-800">Location:</p>
+                <p class="text-gray-700 mb-3">Located about 300m from the North Gate in South West of Ganga Hostel.</p>
+                <p class="font-semibold text-gray-800">Staffing Highlights:</p>
+                <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                    <li>Headed by the Chief Medical Officer.</li>
+                    <li>Includes CMO, Medical Officer, part-time Doctors for General OPD.</li>
+                    <li>Specialists, Homeopathic Physician, Nurses, Pharmacists, and Technical Staff.</li>
+                </ul>
+            </div>
+
+            <!-- 3. OPD Services & Specialists -->
+            <div class="section-card border-t-4 border-green-500">
+                <h3 class="text-2xl font-bold text-green-800 mb-4 flex items-center">
+                    <svg class="h-6 w-6 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7h16M4 7C4 4.79 7.582 3 12 3s8 1.79 8 4M12 21V3"/></svg>
+                    OPD & Specialist Consultations
+                </h3>
+                <p class="font-bold text-red-600 mb-2">OPD registration is compulsory.</p>
+                <p class="font-semibold text-gray-800">Available Specialists:</p>
+                <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                    <li>Internal Medicine, Psychiatry, ENT, Ophthalmology.</li>
+                    <li>Dentistry, Skin, Cardiology.</li>
+                    <li>Homeopathic Physician (services available).</li>
+                </ul>
+                <p class="mt-3 font-semibold text-blue-600">► Online Appointment for Specialist OPDs</p>
+            </div>
+            
+            <!-- 4. Timings and Holidays -->
+            <div class="section-card border-t-4 border-purple-500">
+                <h3 class="text-2xl font-bold text-purple-800 mb-4 flex items-center">
+                    <svg class="h-6 w-6 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Working Hours & Timings
+                </h3>
+                <div class="space-y-3">
+                    <p class="font-semibold text-gray-800">General OPD (Mon-Sat):</p>
+                    <p class="text-gray-700 pl-4">
+                        <span class="font-medium">Morning:</span> 8:00 AM to 2:30 PM <br>
+                        <span class="font-medium">Evening:</span> 2:30 PM to 9:00 PM (Part-time doctors provide services)
+                    </p>
+                    <p class="font-semibold text-gray-800">Holidays:</p>
+                    <p class="text-gray-700 pl-4">
+                        Closed on Holi, Diwali, Sundays, and National Holidays. <br>
+                        <span class="font-medium text-sm text-red-500">Exception:</span> Health Centre functions 8:00 AM to 2:30 PM on Gazetted holidays and Sundays.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 5. Facilities & Benefits -->
+            <div class="section-card border-t-4 border-yellow-500">
+                <h3 class="text-2xl font-bold text-yellow-800 mb-4 flex items-center">
+                    <svg class="h-6 w-6 mr-2 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                    Facilities & Fees
+                </h3>
+                <ul class="list-disc list-inside text-gray-700 space-y-2">
+                    <li>Medicines provided free of cost to students and retired employees (as per University rule).</li>
+                    <li>Laboratory facility for Haematological, Biochemical and Microbiology tests (8 AM to 11 AM).</li>
+                    <li>Free services ECG, Injection, and Dressing.</li>
+                    <li>free Health servicefor all full-time and part-time students.</li>
+                </ul>
+            </div>
+
+            <!-- 6. Ambulance Services and Coverage -->
+            <div class="section-card border-t-4 border-red-500">
+                <h3 class="text-2xl font-bold text-red-800 mb-4 flex items-center">
+                    <svg class="h-6 w-6 mr-2 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0 3 1.343 3 3v2l-5 5-5-5v-2c0-1.657 1.343-3 3-3zM4 16h16"/></svg>
+                    Ambulance & Services Not Covered
+                </h3>
+                <p class="font-semibold text-gray-800">Ambulance Availability:</p>
+                <p class="text-gray-700 mb-3">One ICU Ambulance and one Patient Transport Vehicle available 24 hours for resident students.</p>
+                
+                <p class="font-semibold text-red-600">Services NOT Covered:</p>
+                <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                    <li>Dental services like denture, root canal treatment.</li>
+                    <li>Medical examination/certifications for employment, insurance, legal, or non-academic purpose.</li>
+                    <li>Laboratory tests/X-ray for purpose other than diagnosis and treatment.</li>
+                    <li>No reimbursement permissible for students (as per UGC norms).</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- OPD Timetable Section -->
+        <section class="section-card mt-12 border-t-4 border-indigo-500">
+            <h2 class="text-3xl font-extrabold text-indigo-800 mb-6 text-center">OPD Timings and Location Guide</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-indigo-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Room No.</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Times</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wing</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">GENERAL OPD</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">208, 221, 222, 223 & 224</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">8 AM to 2 PM (Morning) / 3 PM to 9 PM (Evening)</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">NEW WING</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">OPD CARD Registration</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">209, 207</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">8 AM to 2 PM (Morning) / 3 PM to 9 PM (Evening)</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">NEW WING</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">LAB TEST</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">212, 218 & 219</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">8 AM to 11 AM</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">OLD WING</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">PART TIME PSYCHOLOGIST</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">210</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">8 AM to 12 PM (Mon-Fri) / 3 PM to 7 PM (Sat)</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">OLD WING</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">Online Appointment for Specialist OPDs</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" colspan="3">Booking is compulsory for Specialist Consultations (Internal Medicine, Psychiatry, ENT, Ophthalmology, Dentistry, Skin, Cardiology).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="mt-4 text-sm text-gray-600">Note: For all the Specialist O.P.Ds the registration/token has to be taken online. Also, maximum twenty (20) patients will be seen in a Specialist O.P.D.</p>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white py-12 mt-12">
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="text-xl font-bold mb-4">JNU Health Centre</h3>
+                <p class="text-gray-400">
+                    A comprehensive digital healthcare solution for the JNU community, dedicated to high-quality health services and streamlined management.
+                </p>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li><a href="/home" class="text-gray-400 hover:text-white">Home</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white">Services</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold mb-4">Contact Info</h3>
+                <p class="text-gray-400">JNU Campus, New Delhi, 110067</p>
+                <p class="text-gray-400">Email: info@jnuhealth.com</p>
+                <p class="text-gray-400">Phone (General): 011-26741636</p>
+                <div class="flex space-x-4 mt-4">
+                    <span class="text-gray-400">Emergency: 9971728866 / 9971728877</span>
+                </div>
+            </div>
+        </div>
+        <div class="mt-8 border-t border-gray-700 pt-8 text-center text-gray-500">
+            &copy; 2025 JNU Health Centre Management. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Floating Buttons (WhatsApp and Scroll-to-Top) -->
+    <a href="https://wa.me/yourphonenumber" class="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-colors duration-300 z-20" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="white" stroke="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 3.328 1.583 6.307 4.05 8.16l-.85 3.14a.5.5 0 00.65.65l3.14-.85A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm3.83 13.91l-.7.7a.5.5 0 01-.707 0l-1.636-1.636a.5.5 0 010-.707l.7-.7a.5.5 0 000-.707l-2.828-2.828a.5.5 0 00-.707 0l-.7.7a.5.5 0 01-.707 0L8.09 11.2a.5.5 0 00-.707 0l-1.06 1.06a.5.5 0 000 .707l1.06 1.06a.5.5 0 010 .707l-2.828 2.828a.5.5 0 01-.707 0l-.7-.7a.5.5 0 00-.707 0L4.17 19.83a.5.5 0 000 .707l.7.7a.5.5 0 010 .707l1.06 1.06a.5.5 0 00.707 0l2.828-2.828a.5.5 0 01.707 0l.7.7a.5.5 0 00.707 0l1.636-1.636a.5.5 0 01.707 0l.7.7a.5.5 0 00.707 0l2.828-2.828a.5.5 0 01.707 0l1.06 1.06a.5.5 0 00.707 0l1.06-1.06a.5.5 0 000-.707l-1.06-1.06a.5.5 0 010-.707z"/></svg>
+    </a>
+
+    <button id="scrollToTopBtn" class="fixed bottom-20 right-6 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors duration-300 hidden z-20">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+    </button>
+
+    <script>
+        // Smooth scroll to top functionality
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+        window.onscroll = function() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                scrollToTopBtn.classList.remove('hidden');
+            } else {
+                scrollToTopBtn.classList.add('hidden');
+            }
+        };
+
+        scrollToTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Removed carousel script as the section it controls was removed.
+    </script>
+</body>
+</html>

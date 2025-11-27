@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JNU Health Center - Admin Login</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom CSS for a professional, full-height layout */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; /* Light gray background */
+        }
+        /* Custom blend for the background gradient area */
+        .login-hero {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 100%); /* Blue gradient background */
+            min-height: calc(100vh - 8rem); /* Adjust based on footer height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        /* Style the submit button (Admin Primary Color) */
+        .btn-admin-primary {
+            background-color: #3b82f6; /* Blue-600 */
+            border: none;
+            transition: background-color 0.3s;
+        }
+        .btn-admin-primary:hover {
+            background-color: #2563eb; /* Blue-700 */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- 1. Header (Consistent Design) -->
+    <header class="bg-white shadow-md p-4 sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Hospital Management Name -->
+            <a href="{{ url_for('welcome') }}" class="text-2xl font-bold text-blue-800 hover:text-blue-900 transition-colors">JNU Health Center</a>
+            <!-- Navigation Links -->
+            <nav class="space-x-4 flex items-center">
+                <!-- Patient Login Link -->
+                <a href="{{ url_for('login') }}" class="text-gray-600 hover:text-blue-800 font-semibold">Patient Login</a>
+                <!-- Patient Register Link -->
+                <a href="{{ url_for('register') }}" class="text-gray-600 hover:text-blue-800 font-semibold">Patient Register</a>
+                <!-- Admin Login Button (Highlighted) -->
+                <a href="{{ url_for('login') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-700 transition duration-300 border-b-2 border-orange-500">Admin Login</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 2. Main Login Content Area (Gradient Background) -->
+    <main class="login-hero flex-grow">
+        <div class="w-full max-w-md">
+            
+            <!-- Login Card -->
+            <!-- Highlighted Orange Border for Admin Access -->
+            <div class="bg-white p-8 md:p-10 rounded-xl shadow-2xl border-t-4 border-orange-600 transform transition-all duration-300 hover:shadow-3xl">
+                
+                <h1 class="text-3xl font-bold text-blue-800 text-center mb-2">Admin Panel Login</h1>
+                <p class="text-center text-gray-500 mb-8 font-medium">Use your Administrator credentials to access the dashboard.</p>
+                
+                <!-- Flash Messages (for login failures) -->
+                <div class="mb-4">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="p-3 rounded-lg text-white font-medium 
+                                    {% if category == 'danger' or category == 'error' %} bg-red-500 
+                                    {% elif category == 'success' %} bg-green-500 
+                                    {% else %} bg-blue-500 {% endif %}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+
+                <!-- Login Form -->
+                <!-- Action points to the generic login route which handles role separation -->
+                <form action="{{ url_for('login') }}" method="post" class="space-y-6">
+                    
+                    <!-- Username/Email Field -->
+                    <div class="relative">
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Username / Email</label>
+                        <input type="text" id="name" name="name" 
+                               class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-150"
+                               placeholder="Enter Admin Username or Email" required>
+                    </div>
+                    
+                    <!-- Password Field -->
+                    <div class="relative">
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="password" name="password" 
+                               class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-150"
+                               placeholder="••••••••" required>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="pt-4">
+                        <input type="submit" value="Secure Login"
+                               class="w-full text-white px-4 py-3 rounded-lg font-semibold cursor-pointer btn-admin-primary shadow-lg hover:shadow-xl transition duration-300">
+                    </div>
+                    
+                </form>
+
+                <!-- Footer Link (Option to switch back to Patient Login) -->
+                <div class="text-center mt-6 text-gray-600">
+                    Not an admin? 
+                    <a href="{{ url_for('login') }}" class="text-orange-600 font-medium hover:text-blue-600 transition duration-150">Go to Patient Login</a>
+                </div>
+
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- 3. Footer (Consistent Design) -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-6 text-center text-sm text-gray-400">
+            &copy; 2023 JNU Health Center. All rights reserved. | Administrator Access
+        </div>
+    </footer>
+
+</body>
+</html>

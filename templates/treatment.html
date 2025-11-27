@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JNU Health Center - Record Treatment</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Styles inherited from Doctor/Admin Dashboards */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; 
+        }
+        /* Style for the back button */
+        .btn-back {
+            @apply bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md flex items-center space-x-2;
+        }
+        /* Style for the submit button (Accent Color - Orange for final action) */
+        .btn-submit {
+            @apply bg-orange-600 text-white font-bold px-8 py-3 rounded-lg hover:bg-orange-700 transition-colors duration-200 shadow-lg;
+        }
+        /* Style for input fields */
+        .input-box {
+            @apply w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150;
+        }
+        .form-label {
+            @apply block text-sm font-medium text-gray-700 mb-1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- 1. Header and Navigation -->
+    <header class="bg-white shadow-lg sticky top-0 z-20">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            
+            <!-- Title -->
+            <div class="flex items-center space-x-3">
+                <h1 class="text-3xl font-extrabold text-blue-800">Record Treatment Details</h1>
+            </div>
+
+            <!-- Back Button (Assumes redirection to Doctor Dashboard) -->
+            <a href="{{ url_for('doctor_dash') }}" class="btn-back">
+                <!-- Back Arrow SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- 2. Main Content Layout -->
+    <main class="flex-grow flex items-start justify-center p-8">
+        
+        <div class="w-full max-w-4xl bg-white p-8 rounded-xl shadow-2xl border-t-4 border-orange-500">
+            
+            <!-- Contextual Header (Dynamic Data Placeholders) -->
+            <div class="mb-8 border-b pb-4 border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-700 mb-2">Visit Context</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-lg">
+                    <h6 class="font-medium text-gray-800">Patient: <span class="font-semibold text-blue-700">{{ patient_name }}</span></h6>
+                    <h6 class="font-medium text-gray-800">Appointment ID: <span class="font-semibold text-orange-600">{{ appt_id }}</span></h6>
+                    <h6 class="font-medium text-gray-800">Date: <span class="font-semibold text-gray-600">{{ appt_date }}</span></h6>
+                </div>
+            </div>
+
+            <!-- Treatment Form -->
+            <!-- NOTE: Action should post to a route like '/save-treatment/<appt_id>' -->
+            <form action="/save-treatment/{{ appt_id }}" method="post" class="space-y-6">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
+                    
+                    <!-- Diagnosis -->
+                    <div class="md:col-span-2">
+                        <label for="diagnosis" class="form-label text-lg">Diagnosis / Assessment (Required)</label>
+                        <textarea class="input-box h-24" id="diagnosis" name="diagnosis" 
+                                  placeholder="e.g., Acute viral infection, Mild hypertension, Follow-up consultation" required></textarea>
+                    </div>
+
+                    <!-- Test Done / Visit Type (Mapped from Patient History) -->
+                    <div>
+                        <label for="visit-type" class="form-label">Visit Type</label>
+                        <input type="text" class="input-box" id="visit-type" name="visit_type" 
+                               placeholder="e.g., In-person, Teleconsultation">
+                    </div>
+                    
+                    <!-- Medicines -->
+                    <div>
+                        <label for="medicines" class="form-label">Medicines Prescribed</label>
+                        <input type="text" class="input-box" id="medicines" name="medicines" 
+                               placeholder="e.g., Tylenol 500mg (1x/day), Amoxicillin (7 days)">
+                    </div>
+
+                    <!-- Test Done -->
+                    <div>
+                        <label for="test-done" class="form-label">Tests Ordered</label>
+                        <input type="text" class="input-box" id="test-done" name="test_done" 
+                               placeholder="e.g., CBC, X-Ray Chest, ECG">
+                    </div>
+
+                    <!-- Prescription/Advice -->
+                    <div>
+                        <label for="prescription" class="form-label">Prescription / Follow-up Advice</label>
+                        <textarea class="input-box h-24" id="prescription" name="prescription" 
+                                  placeholder="Detailed instructions for the patient and next appointment schedule."></textarea>
+                    </div>
+                    
+                    <!-- Notes (Internal use) -->
+                    <div class="md:col-span-2">
+                        <label for="notes" class="form-label">Internal Doctor Notes (Not visible to Patient)</label>
+                        <textarea class="input-box h-24 bg-gray-100" id="notes" name="notes" 
+                                  placeholder="e.g., Consulted Cardiology, Patient non-compliant with diet."></textarea>
+                    </div>
+                    
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="text-center pt-6">
+                    <input type="submit" class="btn-submit" value="Finalize & Save Treatment">
+                </div>
+                
+            </form>
+        </div>
+        
+    </main>
+    
+    <!-- 3. Footer (Consistent with other pages) -->
+    <footer class="bg-gray-800 text-white py-6 mt-8">
+        <div class="container mx-auto px-6 text-center text-sm text-gray-400">
+            &copy; 2023 JNU Health Center. All rights reserved. | Doctor Panel
+        </div>
+    </footer>
+
+</body>
+</html>

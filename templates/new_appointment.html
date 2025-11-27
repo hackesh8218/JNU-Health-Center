@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JNU Health Center- Book New Appointment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Base styles */
+        body { font-family: 'Inter', sans-serif; background-color: #f7fafc; }
+        .input-box {
+            @apply w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150;
+        }
+        .form-label { @apply block text-gray-700 font-medium mb-1; }
+        
+        /* Themed buttons */
+        .btn-primary { @apply bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-orange-700 transition; }
+        .btn-back { @apply bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-semibold shadow; }
+        
+        /* Styling for select dropdown to look uniform */
+        select.input-box {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236B7280'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 0.8em;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gray-100 flex flex-col">
+
+    <!-- Flash Messages Area (Essential for displaying server feedback) -->
+    <div class="fixed top-4 right-4 z-50 space-y-2 w-80">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="p-4 rounded-lg shadow-md text-white font-semibold 
+                        {% if category == 'danger' or category == 'error' %} bg-red-500 
+                        {% elif category == 'success' %} bg-green-500 
+                        {% else %} bg-blue-500 {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- HEADER -->
+    <header class="bg-white shadow-lg p-5 flex justify-between items-center">
+        <h1 class="text-3xl font-extrabold text-blue-800">Book New Appointment</h1>
+        <a href="{{ url_for('patient_dash') }}" class="btn-back flex items-center space-x-2">
+            <span>⬅</span>
+            <span>Back to Dashboard</span>
+        </a>
+    </header>
+
+    <main class="flex-grow container mx-auto p-6">
+
+        <div class="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-2xl border-t-4 border-orange-600">
+
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-3 mb-6">
+                Appointment Details
+            </h2>
+
+            <!-- APPOINTMENT FORM -->
+            <form action="{{ url_for('new_appointment') }}" method="POST" class="space-y-6">
+
+                <!-- Patient Name (Auto-filled) -->
+                <div>
+                    <label class="form-label">Patient Name</label>
+                    <input type="text" value="{{ user.name }}" class="input-box bg-gray-100 cursor-not-allowed" disabled>
+                    <input type="hidden" name="user_id" value="{{ user.user_id }}">
+                </div>
+                
+                <!-- Department Dropdown -->
+                <div>
+                    <label class="form-label">Select Department</label>
+                    <select name="department_id" id="departmentSelect" class="input-box" required>
+                        <option value="">-- Choose Department --</option>
+                        {% for dept in departments %}
+                            <option value="{{ dept.dept_id }}">{{ dept.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Doctor Dropdown (Dynamic) -->
+                <div>
+                    <label class="form-label">Select Doctor</label>
+                    <select name="doctor_id" id="doctorSelect" class="input-box" required>
+                        <option value="">-- Select Department First --</option>
+                    </select>
+                </div>
+
+                <!-- Date and Time Grid -->
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Date -->
+                    <div>
+                        <label class="form-label">Appointment Date</label>
+                        <input type="date" name="date" class="input-box" required>
+                    </div>
+
+                    <!-- Time -->
+                    <div>
+                        <label class="form-label">Time Slot</label>
+                        <select name="time" class="input-box" required>
+                            <option value="">-- Select Time --</option>
+                            <option value="09:00 AM">09:00 AM</option>
+                            <option value="10:00 AM">10:00 AM</option>
+                            <option value="11:00 AM">11:00 AM</option>
+                            <option value="12:00 PM">12:00 PM</option>
+                            <option value="02:00 PM">02:00 PM</option>
+                            <option value="03:00 PM">03:00 PM</option>
+                            <option value="04:00 PM">04:00 PM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="btn-primary w-full shadow-xl">Book Appointment</button>
+                </div>
+            </form>
+        </div>
+
+    </main>
+
+    <!-- FOOTER (Optional, depending on project structure) -->
+    <footer class="bg-gray-800 text-white text-center py-4 mt-8 text-sm">
+        &copy; 2023 JNU Health Center | Patient Portal
+    </footer>
+
+</body>
+
+<!-- AJAX SCRIPT -->
+<script>
+    document.getElementById("departmentSelect").addEventListener("change", function () {
+        const deptId = this.value;
+        const doctorDropdown = document.getElementById("doctorSelect");
+
+        // Show loading state immediately
+        doctorDropdown.innerHTML = "<option value=''>Loading Doctors...</option>";
+
+        // Ensure we only fetch if a department is selected
+        if (!deptId) {
+            doctorDropdown.innerHTML = "<option value=''>-- Select Department First --</option>";
+            return;
+        }
+
+        // Fetch doctors based on department ID
+        fetch(`/get-doctors/${deptId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                doctorDropdown.innerHTML = "<option value=''>-- Select Doctor --</option>";
+
+                if (data.length === 0) {
+                    doctorDropdown.innerHTML += "<option value='' disabled>No Doctors Available in this Dept.</option>";
+                    return;
+                }
+
+                data.forEach(doc => {
+                    // Assuming doc object has doctor_id and name fields passed from Python/JSON
+                    doctorDropdown.innerHTML +=
+                        `<option value="${doc.doctor_id}">
+                            Dr. ${doc.name} (${doc.specialization})
+                        </option>`;
+                });
+            })
+            .catch(error => {
+                console.error("Fetch error:", error);
+                doctorDropdown.innerHTML = "<option value='' disabled>Error loading doctors.</option>";
+            });
+    });
+</script>
+</html>

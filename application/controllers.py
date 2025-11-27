@@ -1,0 +1,653 @@
+
+from flask import current_app as app # if you directly import app> circular import error
+from flask import (
+    current_app as app,   # you used this pattern to avoid circular imports
+    render_template,
+    redirect,
+    request,
+    session,
+    flash,
+    url_for
+)
+from sqlalchemy import func 
+from flask import jsonify
+from datetime import date
+
+from werkzeug.security import generate_password_hash, check_password_hash
+from .models import User, Department, Doctor, Appointment, Treatment, Feedback,PatientHistory
+from .database import db
+from datetime import datetime
+#current_app refers to app object that we create 
+
+from .database import db
+
+@app.route("/login",methods=["GET","POST"])
+def login():
+  if request.method=="POST":
+    name=request.form["name"]
+    password=request.form.get("password")
+    #both  are the same method as above to feetch the name and password
+    #fetching the data
+    this_user=User.query.filter_by(name=name).first() #LHS> Table attribute and RHS> Form data
+    if this_user:
+      if this_user.password == password:
+                # ✅ store session info
+                session['user_id'] = this_user.user_id
+                session['role'] = this_user.role
+                session['name'] = this_user.name
+      if this_user.password==password:
+        if this_user.role=="admin":
+          return redirect("/admin-dash")
+        else:
+          return redirect("/patient-dash")
+      else:
+        return "Password is wrong"
+    else:
+      return "User doesn't exist"
+  return render_template("login.html")
+
+@app.route("/register",methods=["GET","POST"])
+def register():
+  if request.method=="POST":
+    name=request.form["name"]
+    email=request.form["email"]
+    password=request.form["password"]
+    user_name=User.query.filter_by(name=name).first()
+    user_email=User.query.filter_by(email=email).first()
+    if user_name or user_email:
+      return "user already exists"
+    else:
+      user=User(name=name,email=email,password=password)
+      db.session.add(user)
+      db.session.commit()
+    flash("Registered Successfully! Please login.", "success")
+    return redirect(url_for("login"))
+  return render_template("register.html") #get method
+
+
+@app.route("/request-history/<int:appointment_id>")
+def request_history(appointment_id):
+
+    # Load appointment
+    appt = Appointment.query.get(appointment_id)
+    if not appt:
+        flash("Appointment not found!", "danger")
+        return redirect("/admin-dash")
+
+    # Patient (comes from Appointment → user relation)
+    patient = appt.user          # Correct
+
+    # Doctor (comes from Appointment → doctor relation)
+    doctor = appt.doctor         # Correct
+
+    # Department (comes from Doctor → department relation)
+    department = doctor.department   # Correct
+
+    # All patient medical history
+    history_records = PatientHistory.query.filter_by(user_id=patient.user_id).all()
+
+    return render_template(
+        "patient_history.html",
+        patient=patient,
+        doctor=doctor,
+        department=department,
+        history=history_records
+    )
+
+
+
+
+@app.route("/add-doctor", methods=["GET", "POST"])
+def add_doctor():
+    # Restrict access to admin only
+    if session.get('role') != 'admin':
+        flash("Only Admin can add new doctors.", "danger")
+        return redirect(url_for('login'))
+
+    # Get department list for dropdown
+    departments = Department.query.all()
+
+    if request.method == "POST":
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        dept_id = request.form.get('dept_id')
+        specialization = request.form.get('specialization')
+        availability = request.form.get('availability')
+
+        # ✅ Validate required fields
+        if not all([name, email, password, dept_id, specialization]):
+            flash("⚠️ Please fill all required fields.", "warning")
+            return render_template("add_new_doctor.html", departments=departments)
+
+        # ✅ Check if email already exists
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash("❌ Doctor with this email already exists!", "danger")
+            return render_template("add_new_doctor.html", departments=departments)
+
+        try:
+            # ✅ Create new User
+            new_user = User(name=name, email=email, password=password, role="doctor")
+            db.session.add(new_user)
+            db.session.commit()
+
+            # ✅ Create Doctor profile
+            new_doctor = Doctor(
+                name=name,
+                email=email,
+                password=password,
+                dept_id=int(dept_id),
+                specialization=specialization,
+                availability=availability,
+                user_id=new_user.user_id
+            )
+            db.session.add(new_doctor)
+            db.session.commit()
+
+            # ✅ Flash success message & reload same page
+            flash("✅ Doctor added successfully!", "success")
+            return redirect(url_for('add_doctor'))  # ✅ stay on same route, show message
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f"❌ Error adding doctor: {str(e)}", "danger")
+            return render_template("add_new_doctor.html", departments=departments)
+
+    # GET request → show empty form
+    return render_template("add_new_doctor.html", departments=departments)
+
+
+
+
+
+
+@app.route("/doctor-dept")
+def doctor_dept():
+    dept_name = request.args.get("name")
+    dept_id = request.args.get("dept_id")
+
+    if dept_id:
+        department = Department.query.filter_by(dept_id=dept_id).first()
+    elif dept_name:
+        department = Department.query.filter_by(name=dept_name).first()
+    else:
+        flash("Invalid department request!", "danger")
+        return redirect(url_for("patient_dash"))
+
+    if not department:
+        flash("Department not found!", "danger")
+        return redirect(url_for("patient_dash"))
+
+    doctors = Doctor.query.filter_by(dept_id=department.dept_id).all()
+
+    return render_template("doctor_dept.html",
+                           department=department,
+                           doctors=doctors)
+
+
+@app.route("/doctor-profile")
+def doctor_profile():
+    doctor_id = request.args.get("doctor_id")   # <-- GET doctor_id from URL query string
+
+    if not doctor_id:
+        return "Doctor ID missing"
+
+    doctor = Doctor.query.filter_by(doctor_id=doctor_id).first()
+    if not doctor:
+        return "Doctor not found"
+
+    department = Department.query.filter_by(dept_id=doctor.dept_id).first()
+
+    return render_template(
+        "doctor_profile.html",
+        doctor=doctor,
+        department=department
+    )
+
+
+@app.route("/patient-dash")
+def patient_dash():
+
+    if session.get("role") != "patient":
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for("login"))
+
+    user_id = session.get("user_id")
+    this_user = User.query.get(user_id)
+
+    # Fetch ALL appointments for this patient
+    appointments = Appointment.query.filter_by(
+        user_id=user_id
+    ).order_by(Appointment.date.asc()).all()
+
+    # Fetch all departments from database (dynamic display)
+    departments = Department.query.all()
+
+    return render_template(
+        "patient_dash.html",
+        this_user=this_user,
+        appointments=appointments,
+        departments=departments
+    )
+
+
+
+
+@app.route("/doctor-dash")
+def doctor_dash():
+
+    # ------------------------------------------------
+    # 1. Check Login
+    # ------------------------------------------------
+    if "user_id" not in session:
+        flash("Please login first!", "warning")
+        return redirect(url_for("login"))
+
+    if session.get("role") != "doctor":
+        flash("Access denied!", "danger")
+        return redirect(url_for("welcome"))
+
+    user_id = session.get("user_id")
+
+    this_user = User.query.get(user_id)
+
+    # ------------------------------------------------
+    # 2. Fetch Doctor Profile
+    # ------------------------------------------------
+    doctor = Doctor.query.filter_by(user_id=user_id).first()
+
+    if not doctor:
+        flash("Doctor profile not found!", "danger")
+        return redirect(url_for("welcome"))
+
+    # ================================================================
+    # 3. UPCOMING APPOINTMENTS → For "Upcoming Appointments" table
+    # ======================================================
+    # ==========
+    appointments = Appointment.query.filter_by(
+        doctor_id=doctor.doctor_id,
+        status="Booked"
+    ).order_by(Appointment.date.asc()).all()
+
+    # ================================================================
+    # 4. COMPLETED TREATMENTS TODAY → For "Completed Treatments" table
+    # ================================================================
+    # Note: Patient history contains treatment details
+    completed_treatments = PatientHistory.query.filter(
+        PatientHistory.doctor_id == doctor.doctor_id,
+        db.func.date(PatientHistory.created_at) == date.today()
+    ).order_by(PatientHistory.created_at.desc()).all()
+
+    # ================================================================
+    # 5. Dashboard statistics (optional)
+    # ================================================================
+    total_appointments_today = Appointment.query.filter(
+        Appointment.doctor_id == doctor.doctor_id,
+        Appointment.date == date.today()
+    ).count()
+
+    total_assigned_patients = Appointment.query.filter_by(
+        doctor_id=doctor.doctor_id
+    ).count()
+
+    # ================================================================
+    # 6. Render doctor dashboard with required data
+    # ================================================================
+    return render_template(
+        "doctor_dash.html",
+
+        # For upcoming appointments table
+        appointments=appointments,
+
+        # For completed treatments table
+        completed_treatments=completed_treatments,
+
+        # Stats
+        todays_count=total_appointments_today,
+        total_patients=total_assigned_patients,
+
+        # Logged-in doctor
+        doctor=doctor,
+        this_user=this_user
+    )
+
+@app.route("/",methods =["GET","POST"])
+def welcome():
+   return render_template("welcome.html")
+
+@app.route("/admin-login",methods=["GET","POST"])
+def admin_login():
+   return render_template("admin_login.html")
+
+@app.route("/doctor-login", methods=["GET", "POST"])
+def doctor_login():
+    if request.method == "POST":
+        name = request.form.get("name")
+        password = request.form.get("password")
+
+        # ✅ Basic field validation
+        if not name or not password:
+            flash("⚠️ Please enter both email and password.", "warning")
+            return render_template("doctor_login.html")
+
+        # ✅ Check if doctor exists in User table
+        doctor_user = User.query.filter_by(name=name, role="doctor").first()
+
+        if doctor_user and doctor_user.password == password:
+            # ✅ Login success: store in session
+            session["user_id"] = doctor_user.user_id
+            session["role"] = "doctor"
+            session["name"] = doctor_user.name
+
+            flash(f"✅ Welcome Dr. {doctor_user.name}!", "success")
+            return redirect(url_for("doctor_dash"))  # ← change route name as per your project
+
+        else:
+            flash("❌ Invalid email or password. Please try again.", "danger")
+            return render_template("doctor_login.html")
+
+    # GET request — show login page
+    return render_template("doctor_login.html")
+
+        
+@app.route("/update_patient_data",methods=["GET","POST"])
+def update_patient_data():
+   return render_template("update_patient_history.html")
+
+@app.route("/doctor-avail",methods=["GET","POST"])
+def doctor_avail():
+   return render_template("doctor_avail.html")
+   
+@app.route("/logout",methods=["GET","POST"])
+def logout():
+   return render_template("doctor_login.html")
+
+@app.route("/cancel-appointment/<int:appt_id>", methods=["POST"])
+def cancel_appointment(appt_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect("/login")
+
+    appointment = Appointment.query.get_or_404(appt_id)
+
+    # Optional: prevent others from canceling others' appointments
+    if appointment.user_id != user_id:
+        flash("Unauthorized access", "danger")
+        return redirect("/appointments")
+
+    db.session.delete(appointment)
+    db.session.commit()
+    flash("Appointment cancelled successfully!", "success")
+    return redirect(url_for("appointments"))  # or wherever your list page is
+
+@app.route("/add_department", methods=["GET", "POST"])
+def add_department():
+    if request.method == "POST":
+        # ✅ Get form data
+        dept_name = request.form.get("name")
+        description = request.form.get("description")
+
+        # ✅ Validation check
+        if not dept_name:
+            flash("Department name is required!", "danger")
+            return redirect(url_for("add_department"))
+
+        # ✅ Check if department already exists
+        existing = Department.query.filter_by(name=dept_name).first()
+        if existing:
+            flash("Department already exists!", "warning")
+            return redirect(url_for("add_department"))
+
+        # ✅ Create and save new department
+        new_department = Department(name=dept_name, description=description)
+        db.session.add(new_department)
+        db.session.commit()
+
+        flash("✅ Department added successfully!", "success")
+        return redirect(url_for("add_department"))
+
+    # GET request → render form
+    return render_template("add_department.html")
+# ============================================================
+# ROUTE: Update Patient History
+# ============================================================
+@app.route("/update-patient-history/<int:user_id>", methods=["GET", "POST"])
+def update_patient_history(user_id):
+    user = User.query.filter_by(user_id=user_id).first()
+    if not user:
+        flash("User not found!", "danger")
+        return redirect(url_for("dashboard"))
+
+    # You can later make this dynamic based on doctor login, etc.
+    department = Department.query.filter_by(name="Cardiology").first()
+    if not department:
+        flash("Department not found!", "danger")
+        return redirect(url_for("dashboard"))
+
+    if request.method == "POST":
+        visit_type = request.form.get("visit-type")
+        test_done = request.form.get("test-done")
+        diagnosis = request.form.get("diagnosis")
+        medicines = request.form.get("medicines")
+        prescription = request.form.get("prescription")
+
+        new_history = PatientHistory(
+            user_id=user.user_id,
+            department_id=department.dept_id,
+            visit_type=visit_type,
+            test_done=test_done,
+            diagnosis=diagnosis,
+            medicines=medicines,
+            prescription=prescription
+        )
+
+        db.session.add(new_history)
+        db.session.commit()
+
+        flash("✅ Patient history updated successfully!", "success")
+        return redirect(url_for("update_patient_history_bp.update_patient_history", user_id=user_id))
+
+    # Fetch previous patient histories for display (optional)
+    history_records = PatientHistory.query.filter_by(user_id=user_id).order_by(PatientHistory.created_on.desc()).all()
+
+    return render_template("update_patient_history.html", user=user, department=department, histories=history_records)
+
+
+
+
+
+
+
+
+
+def is_role(expected_role):
+    from flask import session
+    return session.get('role') == expected_role
+
+@app.route("/admin-dash")
+def admin_dash():
+    
+    if not is_role('admin'):
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for('login'))
+        
+    user_id = session.get('user_id')
+    this_user = User.query.get(user_id)
+    
+    # === Total Counts for Dashboard Cards ===
+    doctor_count = Doctor.query.count()
+    patient_count = User.query.filter_by(role='patient').count()
+    
+
+    # === Doctors List Table ===
+  
+    doctors_list = Doctor.query.all()
+    patient_list = User.query.filter_by(role="patient").all()  
+    # === Upcoming Appointments (JOIN FIXED) ===
+    upcoming_appts = db.session.query(
+        Appointment,
+        User.name.label("patient_name"),
+        Doctor.name.label("doctor_name"),
+        Department.name.label("dept_name")
+    ).join(
+        User, Appointment.user_id == User.user_id  # patient name
+    ).join(
+        Doctor, Appointment.doctor_id == Doctor.doctor_id
+    ).join(
+        Department, Doctor.dept_id == Department.dept_id
+    ).order_by(
+        Appointment.appointment_id.desc()
+    ).limit(10).all()
+
+    return render_template(
+        "admin_dash.html",
+        this_user=this_user,
+        doctors_list=doctors_list,
+        doctor_count=doctor_count,
+        patient_count=patient_count,
+        patient_list=patient_list, 
+        appointment_list=upcoming_appts
+    )
+
+
+
+
+@app.route("/search")
+def search():
+    query = request.args.get("query", "").strip()
+
+    # Search in doctors, departments, or anything you want
+    results = []
+
+    if query:
+        results = Doctor.query.filter(Doctor.specialization.ilike(f"%{query}%")).all()
+
+    return render_template("search_results.html", results=results, query=query)
+
+
+from datetime import datetime
+
+@app.route("/new-appointment", methods=["GET", "POST"])
+def new_appointment():
+    if "user_id" not in session:
+        return redirect("/login")
+
+    user = User.query.get(session["user_id"])
+
+    if request.method == "POST":
+        doctor_id = request.form["doctor_id"]
+        user_id = request.form["user_id"]
+        
+        # Convert HTML date string to Python date object
+        date_str = request.form["date"]
+        date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        
+        time = request.form["time"]
+
+        new_appt = Appointment(
+            doctor_id=doctor_id,
+            user_id=user_id,
+            date=date,
+            time=time,
+            status="Booked"
+        )
+
+        db.session.add(new_appt)
+        db.session.commit()
+        flash("✅ Appointment successfully!", "success")
+        return redirect("/new-appointment")
+
+    departments = Department.query.all()
+    return render_template("new_appointment.html", departments=departments, user=user)
+
+
+@app.route("/get-doctors/<int:dept_id>", methods=["GET"])
+def get_doctors(dept_id):
+    try:
+        doctors = Doctor.query.filter_by(dept_id=dept_id).all()
+        doctor_data = [doc.to_dict() for doc in doctors]
+        return jsonify(doctor_data)
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({"error": "Failed to load doctors"}), 500
+
+
+@app.route("/full-report/<int:history_id>")
+def full_report(history_id):
+    history = PatientHistory.query.get(history_id)
+    if not history:
+        flash("History record not found!", "danger")
+        return redirect("/patient-dash")
+
+    user = history.user
+    department = history.department
+
+    return render_template(
+        "full_report.html",
+        history=history,
+        user=user,
+        department=department
+    )
+
+@app.route("/mark-complete/<int:appt_id>", methods=["POST"])
+def mark_complete(appt_id):
+    appt = Appointment.query.get(appt_id)
+    if not appt:
+        flash("Appointment not found!", "danger")
+        return redirect("/doctor-dash")
+
+    appt.status = "Completed"
+    db.session.commit()
+
+    flash("Appointment marked as completed!", "success")
+    return redirect("/doctor-dash")
+@app.route('/save-treatment/<int:appt_id>', methods=['POST'])
+def save_treatment(appt_id):
+
+    # 1. Load Appointment
+    appointment = Appointment.query.filter_by(appointment_id=appt_id).first()
+    if not appointment:
+        flash("Appointment not found!", "danger")
+        return redirect(url_for('doctor_dash'))
+
+    # 2. Extract patient user_id from appointment
+    user_id = appointment.user_id
+
+    # 3. Get doctor from appointment
+    doctor = Doctor.query.filter_by(doctor_id=appointment.doctor_id).first()
+    if not doctor:
+        flash("Doctor data missing!", "danger")
+        return redirect(url_for('doctor_dash'))
+
+    # 4. Department of the doctor
+    department_id = doctor.dept_id
+
+    # 5. Get all form values
+    diagnosis = request.form.get('diagnosis')
+    visit_type = request.form.get('visit_type')
+    medicines = request.form.get('medicines')
+    test_done = request.form.get('test_done')
+    prescription = request.form.get('prescription')
+    notes = request.form.get('notes')  # Not saved in model (optional)
+
+    # 6. Create PatientHistory entry
+    history = PatientHistory(
+        user_id=user_id,
+        department_id=department_id,
+        visit_type=visit_type,
+        test_done=test_done,
+        diagnosis=diagnosis,
+        medicines=medicines,
+        prescription=prescription
+    )
+
+    db.session.add(history)
+
+    # 7. Mark appointment as Completed
+    appointment.status = "Completed"
+
+    db.session.commit()
+
+    flash("Treatment details saved successfully!", "success")
+    return redirect(url_for('doctor_dash'))

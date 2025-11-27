@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JNU Health Center- Add New Doctor</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Styles for Form Aesthetics */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; 
+        }
+        /* Style for the back button */
+        .btn-back {
+            @apply bg-orange-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors duration-200 shadow-md flex items-center space-x-2;
+        }
+        /* Style for the submit button (Primary Admin Action) */
+        .btn-submit {
+            @apply bg-blue-600 text-white font-bold px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-lg;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Flash Messages Area -->
+    <div class="fixed top-4 right-4 z-50 space-y-2 w-80">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="p-4 rounded-lg shadow-md text-white font-semibold 
+                        {% if category == 'danger' or category == 'warning' %} bg-red-500 
+                        {% elif category == 'success' %} bg-green-500 
+                        {% else %} bg-blue-500 {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- 1. Header and Navigation -->
+    <header class="bg-white shadow-lg sticky top-0 z-20">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Title -->
+            <div class="flex items-center space-x-3">
+                <h1 class="text-3xl font-extrabold text-blue-800">Add a New Doctor</h1>
+            </div>
+
+            <!-- Back Button (Updated to url_for) -->
+            <a href="{{ url_for('admin_dash') }}" class="btn-back">
+                <!-- Back Arrow SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- 2. Main Content Layout -->
+    <main class="flex-grow flex items-start justify-center p-8">
+        
+        <div class="w-full max-w-4xl bg-white p-8 rounded-xl shadow-2xl border-t-4 border-orange-500">
+            
+            <p class="text-center text-gray-600 mb-8">Please fill in all mandatory details to onboard the new doctor.</p>
+
+            <!-- Registration Form (Action points to the current route for POST handling) -->
+            <form action="{{ url_for('add_doctor') }}" method="POST" class="space-y-8">
+                
+                <!-- Section 1: Account and Personal Details -->
+                <div class="p-6 border border-gray-100 rounded-lg bg-gray-50">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Account Setup</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
+                        
+                        <!-- Full Name -->
+                        <div>
+                            <label for="f-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                            <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                   id="f-name" name="name" required>
+                        </div>
+                        
+                        <!-- Email -->
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                   id="email" name="email" required>
+                        </div>
+                        
+                        <!-- Password -->
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Temporary Password</label>
+                            <input type="password" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                   id="password" name="password" required>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Section 2: Medical Credentials -->
+                <div class="p-6 border border-gray-100 rounded-lg bg-gray-50">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Medical Credentials</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
+                        
+                        <!-- Department SELECT FIELD (Uses fetched data) -->
+                        <div>
+                            <label for="dept_id" class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                            <select name="dept_id" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
+                                <option value="">--- Select Department ---</option>
+                                {% for dept in departments %}
+                                    <!-- Value must be the INTEGER dept_id -->
+                                    <option value="{{ dept.dept_id }}">{{ dept.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Specialization -->
+                        <div>
+                            <label for="spl" class="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
+                            <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                   id="spl" name="specialization" placeholder="e.g., General Medicine, Interventional Cardiology" required>
+                        </div>
+                        
+                        <!-- Availability (Optional) -->
+                        <div class="md:col-span-2">
+                            <label for="avl" class="block text-sm font-medium text-gray-700 mb-1">Initial Availability (Optional)</label>
+                            <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                   id="avl" name="availability" placeholder="e.g., Mon-Fri, 9:00 AM - 5:00 PM">
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center pt-4">
+                    <input type="submit" class="btn-submit" value="Add Doctor to System">
+                </div>
+                
+                <!-- Go Back Link -->
+                <div class="text-center text-gray-600">
+                    <span class="mr-1">Want to go back?</span> 
+                    <a href="{{ url_for('admin_dash') }}" class="text-orange-600 font-medium hover:text-orange-700">Go Back to Dashboard</a>
+                </div>
+                
+            </form>
+            
+        </div>
+        
+    </main>
+    
+    <!-- 3. Footer (Consistent with other pages) -->
+    <footer class="bg-gray-800 text-white py-6 mt-8">
+        <div class="container mx-auto px-6 text-center text-sm text-gray-400">
+            &copy; 2023 JNU Health Center. All rights reserved. | Admin Doctor Registration
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JNU Health Center - Admin Dashboard</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Styles for Dashboard Aesthetics and Scroll */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; 
+        }
+        /* Custom orange button style (Sanjeevani Accent Color) */
+        .btn-action {
+            @apply bg-orange-500 text-white font-semibold px-3 py-1 text-sm rounded-lg hover:bg-orange-600 transition-all duration-200 shadow-md;
+        }
+        /* Custom blue button style (Sanjeevani Primary Color) */
+        .btn-primary-blue {
+            @apply bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-lg;
+        }
+        /* Style for the dynamic announcement scroll container */
+        .announcement-container {
+            height: 300px; /* Fixed height for scrolling effect */
+            overflow: hidden;
+            position: relative;
+        }
+        .animate-scroll {
+            animation: scroll-up 15s linear infinite; /* 15s speed */
+        }
+        @keyframes scroll-up {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); } /* Scroll content by half its height for seamless looping */
+        }
+        .announcement-container:hover .animate-scroll {
+            animation-play-state: paused; /* Pause on hover */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Flash Messages Area -->
+    <div class="fixed top-4 right-4 z-50 space-y-2 w-80">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="p-4 rounded-lg shadow-md text-white font-semibold 
+                        {% if category == 'danger' or category == 'error' or category == 'warning' %} bg-red-500 
+                        {% elif category == 'success' %} bg-green-500 
+                        {% else %} bg-blue-500 {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    <!-- End Flash Messages -->
+
+    <!-- 1. Header and Navigation -->
+    <header class="bg-white shadow-lg sticky top-0 z-20">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            
+            <!-- Sanjeevani Logo (Using SVG for clarity and customization) -->
+            <div class="flex items-center space-x-3">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" fill="#3B82F6"/>
+                    <path d="M12 18C15.3137 18 18 15.3137 18 12C18 8.68629 15.3137 6 12 6C8.68629 6 6 8.68629 6 12C6 15.3137 8.68629 18 12 18Z" fill="#F97316"/>
+                    <path d="M10 12L14 12" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 10L12 14" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <h1 class="text-3xl font-extrabold text-blue-800">JNU Health Center Admin</h1>
+            </div>
+
+            <!-- User Welcome and Actions -->
+            <div class="flex items-center space-x-6">
+                <span class="text-xl font-medium text-gray-700">Welcome, <span class="text-blue-600">{{this_user.name}}</span></span>
+                
+                <!-- Search Form -->
+                <form class="flex items-center">
+                    <input type="search" placeholder="Search Patients/Doctors" aria-label="Search"
+                           class="form-control me-2 px-3 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-150">
+                    <button class="bg-orange-500 text-white px-4 py-2 rounded-r-lg hover:bg-orange-600 transition-colors duration-200 font-medium">Search</button>
+                </form>
+
+                <!-- Logout Button -->
+                <a href="{{ url_for('logout') }}" class="text-gray-600 hover:text-red-500 transition-colors duration-200 flex items-center space-x-1 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    <span>LogOut</span>
+                </a>
+            </div>
+        </div>
+    </header>
+    <!-- Dynamic Hospital Image Slider -->
+<div class="w-full bg-white py-4 shadow-md overflow-hidden">
+    <div class="flex space-x-6 animate-scroll-left">
+        
+        <img src="{{ url_for('static', filename='uploads/d1.jpeg') }}" class="h-52 rounded-lg shadow-lg">
+        <img src="{{ url_for('static', filename='uploads/d2.jpeg') }}" class="h-52 rounded-lg shadow-lg">
+        <img src="{{ url_for('static', filename='uploads/d3.jpeg') }}" class="h-52 rounded-lg shadow-lg">
+        <img src="{{ url_for('static', filename='uploads/d4.jpg') }}" class="h-52 rounded-lg shadow-lg">
+        <img src="{{ url_for('static', filename='uploads/d5.jpeg') }}" class="h-52 rounded-lg shadow-lg">
+
+        <!-- Duplicate set for infinite loop -->
+        <img src="{{ url_for('static', filename='uploads/d1.jpeg') }}" class="h-52 rounded-lg shadow-lg">
+        <img src="{{ url_for('static', filename='uploads/d2.jpeg') }}" class="h-52 rounded-lg shadow-lg">
+        <img src="{{ url_for('static', filename='uploads/d3.jpeg') }}" class="h-52 rounded-lg shadow-lg">
+        <img src="{{ url_for('static', filename='uploads/d4.jpg') }}" class="h-52 rounded-lg shadow-lg">
+        <img src="{{ url_for('static', filename='uploads/d5.jpeg') }}" class="h-52 rounded-lg shadow-lg">
+       
+  
+    </div>
+</div>
+
+<style>
+    @keyframes scroll-left {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    .animate-scroll-left {
+        animation: scroll-left 25s linear infinite;
+    }
+</style>
+
+
+    <!-- 2. Main Content Layout -->
+    <main class="flex-grow container mx-auto px-6 py-8">
+        
+        <!-- QUICK CREATION ACTIONS -->
+        <div class="bg-white p-6 rounded-xl shadow-xl mb-8 border-t-4 border-blue-500">
+            <h3 class="text-2xl font-bold text-blue-800 mb-4">Quick Admin Actions</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- Add New Doctor -->
+                <a href="{{ url_for('add_doctor') }}" class="flex items-center justify-center p-4 bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition-colors duration-200 space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                    <span>Add New Doctor</span>
+                </a>
+
+                <!-- Add New Department -->
+                <a href="{{ url_for('add_department') }}" class="flex items-center justify-center p-4 bg-purple-500 text-white font-bold rounded-lg shadow-md hover:bg-purple-600 transition-colors duration-200 space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13h16a1 1 0 011 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1v-4a1 1 0 011-1z" /></svg>
+                    <span>Add New Dept.</span>
+                </a>
+
+            </div>
+        </div>
+        <!-- End Quick Actions -->
+
+        <!-- Dashboard Statistics and Announcements -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-10">
+            
+            <!-- Stats Card 1: Total Doctors (Dynamic) -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500 flex items-center justify-between transition-transform hover:scale-[1.02] duration-300">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Total Doctors</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ doctor_count }}</p> 
+                </div>
+                <img src="https://placehold.co/64x64/3B82F6/ffffff?text=DR" alt="Doctor Icon" class="h-14 w-14 rounded-full">
+            </div>
+
+            <!-- Stats Card 2: Total Patients (Dynamic) -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-orange-500 flex items-center justify-between transition-transform hover:scale-[1.02] duration-300">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Total Patients</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ patient_count }}</p>
+                </div>
+                <img src="https://placehold.co/64x64/F97316/ffffff?text=PT" alt="Patient Icon" class="h-14 w-14 rounded-full">
+            </div>
+            
+            <!-- Stats Card 3: Upcoming Appointments (Dynamic Count) -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-green-500 flex items-center justify-between transition-transform hover:scale-[1.02] duration-300">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Upcoming Appts</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ appointment_list | length }}</p>
+                </div>
+                <img src="https://placehold.co/64x64/10B981/ffffff?text=AP" alt="Appointment Icon" class="h-14 w-14 rounded-full">
+            </div>
+
+            <!-- Latest Updates/Announcements (Dynamic Scrollable) -->
+            <div class="bg-white p-6 rounded-xl shadow-xl border-l-4 border-purple-500 overflow-hidden">
+                <h3 class="text-xl font-bold text-purple-700 mb-4">Latest Hospital Updates</h3>
+                <div class="announcement-container">
+                    <div class="animate-scroll">
+                        <div class="space-y-4 pb-4">
+                            <!-- Mock Announcement Content -->
+                            <p class="text-sm text-gray-700 border-b pb-2"><span class="font-bold text-xs text-purple-500 mr-2">11 Nov:</span> Emergency Ward upgraded with new MRI unit.</p>
+                            <p class="text-sm text-gray-700 border-b pb-2"><span class="font-bold text-xs text-purple-500 mr-2">10 Nov:</span> Dr. Vivek Sharma joined as Sr. Cardiologist.</p>
+                            <p class="text-sm text-gray-700 border-b pb-2"><span class="font-bold text-xs text-purple-500 mr-2">09 Nov:</span> New COVID-19 safety protocols published.</p>
+                            <p class="text-sm text-gray-700 border-b pb-2"><span class="font-bold text-xs text-purple-500 mr-2">08 Nov:</span> Scheduled maintenance for HIS system tonight (2 AM - 4 AM).</p>
+                            <p class="text-sm text-gray-700 border-b pb-2"><span class="font-bold text-xs text-purple-500 mr-2">07 Nov:</span> Mandatory training for all new staff on Patient Data Privacy.</p>
+                            <p class="text-sm text-gray-700 border-b pb-2"><span class="font-bold text-xs text-purple-500 mr-2">06 Nov:</span> Pharmacy stock audit completed successfully.</p>
+                            <p class="text-sm text-gray-700 border-b pb-2"><span class="font-bold text-xs text-purple-500 mr-2">11 Nov:</span> Emergency Ward upgraded with new MRI unit.</p>
+                            <p class="text-sm text-gray-700 border-b pb-2"><span class="font-bold text-xs text-purple-500 mr-2">10 Nov:</span> Dr. Vivek Sharma joined as Sr. Cardiologist.</p>
+                            <p class="text-sm text-gray-700 border-b pb-2"><span class="font-bold text-xs text-purple-500 mr-2">09 Nov:</span> New COVID-19 safety protocols published.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 3. Tables Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Table 1: Registered Doctors -->
+            <div class="bg-white p-6 rounded-xl shadow-xl lg:col-span-1">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-blue-800 border-b-2 border-orange-500 pb-1">Registered Doctors</h3>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sr. No.</th>
+                                <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <!-- Jinja loop for dynamic doctor list -->
+                            {% for doctor in doctors_list %}
+                            <tr class="hover:bg-blue-50 transition-colors duration-150">
+                                <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ loop.index }}</td>
+                                <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">{{ doctor.name }}</td>
+                                <td class="px-3 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                    <button class="btn-action bg-green-500 hover:bg-green-600">Edit</button>
+                                    <!-- Assume delete links use doctor.id -->
+                                    <form action="#" method="POST" class="inline">
+                                        <button type="submit" class="btn-action bg-red-500 hover:bg-red-600">Delete</button>
+                                    </form>
+                                    <button class="btn-action bg-yellow-600 hover:bg-yellow-700">Blacklist</button>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="3" class="px-3 py-4 text-center text-gray-500">No doctors registered yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Table 2: Registered Patients -->
+            <div class="bg-white p-6 rounded-xl shadow-xl lg:col-span-1">
+                <h3 class="text-2xl font-bold text-blue-800 mb-6 border-b-2 border-orange-500 pb-1">Registered Patients</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sr. No.</th>
+                                <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <!-- Jinja loop for dynamic patient list -->
+                            {% for patient in patient_list %}
+                            <tr class="hover:bg-blue-50 transition-colors duration-150">
+                                <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ loop.index }}</td>
+                                <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">{{ patient.name }}</td>
+                                <td class="px-3 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                    <button class="btn-action bg-green-500 hover:bg-green-600">Edit</button>
+                                    <button class="btn-action bg-red-500 hover:bg-red-600">Delete</button>
+                                    <button class="btn-action bg-yellow-600 hover:bg-yellow-700">Blacklist</button>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="3" class="px-3 py-4 text-center text-gray-500">No patients registered yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Image/Ad Placeholder -->
+            <div class="bg-white p-6 rounded-xl shadow-xl flex flex-col justify-between items-center lg:col-span-1">
+                <h3 class="text-xl font-bold text-blue-800 mb-4">Hospital Spotlight</h3>
+                <img src="https://placehold.co/400x250/2563EB/FFFFFF?text=Modern+Surgery+Theater" alt="Hospital Facility Image" class="rounded-lg shadow-md w-full object-cover">
+                <p class="mt-4 text-center text-gray-600 text-sm">Our newly commissioned robotic surgery unit is now operational, improving precision and patient outcomes.</p>
+            </div>
+            
+        </div>
+
+        <!-- Table 3: Upcoming Appointments (Full Width) -->
+        <div class="bg-white p-6 rounded-xl shadow-xl mt-8">
+            <h3 class="text-2xl font-bold text-blue-800 mb-6 border-b-2 border-orange-500 pb-1">Upcoming Appointments</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Appt. ID</th>
+                            <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Name</th>
+                            <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor Name</th>
+                            <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                            <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient History</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <!-- Jinja loop for dynamic appointment list -->
+                        {% for appt_data in appointment_list %}
+                            <tr class="hover:bg-blue-50 transition-colors duration-150">
+                                <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ appt_data.Appointment.appointment_id }}</td>
+                                <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">{{ appt_data.patient_name }}</td>
+                                <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">{{ appt_data.doctor_name }}</td>
+                                <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">{{ appt_data.dept_name }}</td>
+                                <td class="px-3 py-4 whitespace-nowrap text-sm font-medium">
+                                    <!-- Linking to history using the patient's User ID (patient_user_id)  -->
+                                <a href="/request-history/{{ appt_data.Appointment.appointment_id }}" class="inline-block">
+                                  <button class="btn-action bg-blue-600 hover:bg-blue-700 px-4 py-1">View</button>
+                                </a>
+                                </td>
+                            </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="px-3 py-4 text-center text-gray-500">No upcoming appointments found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 4. Footer (Consistent with other pages) -->
+    <footer class="bg-gray-800 text-white py-6 mt-8">
+        <div class="container mx-auto px-6 text-center text-sm text-gray-400">
+            &copy; 2023 JNU Health Center. All rights reserved. | Admin Control Panel
+        </div>
+    </footer>
+
+</body>
+</html>

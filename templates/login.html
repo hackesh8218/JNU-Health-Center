@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JNU Health Center- Patient/Admin Login</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom CSS for a professional, full-height layout */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; /* Light gray background */
+        }
+        /* Custom blend for the background gradient area */
+        .login-hero {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 100%); /* Blue gradient background */
+            min-height: calc(100vh - 8rem); /* Adjust based on footer height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        /* Style the submit button */
+        .btn-primary {
+            background-color: #f97316; /* Orange-600 */
+            border: none;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #ea580c; /* Orange-700 */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- 1. Header (Same as Welcome Page) -->
+    <header class="bg-white shadow-md p-4 sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Hospital Management Name -->
+            <a href="index.html" class="text-2xl font-bold text-blue-800 hover:text-blue-900 transition-colors">JNU Health Center</a>
+            <!-- Navigation Links -->
+            <nav class="space-x-4 flex items-center">
+                <!-- Patient Login Link -->
+                <a href="#" class="text-blue-600 hover:text-blue-800 font-semibold border-b-2 border-blue-600 pb-1">Patient Login</a>
+                <!-- Patient Register Link -->
+                <a href="/register" class="text-blue-600 hover:text-blue-800 font-semibold">Patient Register</a>
+                <!-- Admin Login Button -->
+                <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-700 transition duration-300">Admin Login</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 2. Main Login Content Area (Gradient Background) -->
+    <main class="login-hero flex-grow">
+        <div class="w-full max-w-md">
+            
+            <!-- Login Card -->
+            <div class="bg-white p-8 md:p-10 rounded-xl shadow-2xl border-t-4 border-blue-600 transform transition-all duration-300 hover:shadow-3xl">
+                <h1 class="text-3xl font-bold text-gray-800 text-center mb-6">User Login</h1>
+                <p class="text-center text-gray-500 mb-8">Access your Patient or Administrative account.</p>
+
+                <!-- Login Form -->
+                <!-- NOTE: Action points to '/login' as per original request -->
+                <form action="/login" method="post" class="space-y-6">
+                    
+                    <!-- Username Field -->
+                    <div class="relative">
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                        <input type="text" id="name" name="name" 
+                               class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+                               placeholder="Enter your username" required>
+                    </div>
+                    
+                    <!-- Password Field -->
+                    <div class="relative">
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="password" name="password" 
+                               class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+                               placeholder="••••••••" required>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="pt-4">
+                        <input type="submit" value="Login"
+                               class="w-full text-white px-4 py-3 rounded-lg font-semibold cursor-pointer btn-primary shadow-lg hover:shadow-xl transition duration-300">
+                    </div>
+                    
+                </form>
+
+                <!-- Registration Link -->
+                <div class="text-center mt-6 text-gray-600">
+                    Are you a new user? 
+                    <a href="/register" class="text-blue-600 font-medium hover:text-orange-600 transition duration-150">Register</a>
+                </div>
+
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- 3. Footer (Same as Welcome Page) -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-6 text-center text-sm text-gray-400">
+            &copy; 2023 JNU Health Center. All rights reserved. | 123 Hospital Road, Health City
+        </div>
+    </footer>
+
+</body>
+</html>
