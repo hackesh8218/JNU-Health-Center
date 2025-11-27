@@ -19,6 +19,34 @@
         .btn-secondary-action {
             @apply bg-blue-600 text-white font-semibold px-3 py-1 text-sm rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md;
         }
+        /* Header specific styles to mimic the image */
+        .header-bg {
+            background-image: linear-gradient(to right, #4CAF50, #2196F3);
+            background-size: cover;
+            background-position: center;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+        }
+        .header-logo {
+            height: 80px;
+            width: 80px;
+            margin-right: 20px;
+            border-radius: 50%; 
+            object-fit: cover;
+        }
+        .header-text h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+        .header-text p {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+            font-weight: 500;
+        }
         /* Chatbot floating button and panel styles */
         #chatbot-button {
             transition: transform 0.3s ease;
