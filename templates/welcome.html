@@ -83,6 +83,7 @@
             position: relative;
         }
         
+        
         /* Keyframes for vertical scrolling */
         @keyframes scroll-up {
             0% { transform: translateY(0%); }
@@ -117,6 +118,27 @@
               60% { transform: translateX(-300%); }
               80% { transform: translateX(-400%); }
               100% { transform: translateX(-500%); }
+          }
+          /* Custom CSS for Infinite Horizontal Scroll */
+          .animate-scroll-left {
+              /* Set a very large width to contain all images side-by-side */
+              width: 300%; 
+              /* This makes the animation work better than 'flex' alone */
+              display: flex; 
+              /* Apply the animation */
+              animation: scroll-left 45s linear infinite; /* Adjust time for speed */
+          }
+
+          @keyframes scroll-left {
+              from {
+                  /* Start position: no translation */
+                  transform: translate3d(0, 0, 0);
+              }
+              to {
+                  /* End position: translate left by 50% of the container width 
+                    (assuming your duplicate set makes up exactly half the content) */
+                  transform: translate3d(-50%, 0, 0); 
+              }
           }
 
         
@@ -173,6 +195,29 @@
 
           </nav>
     </header>
+  <div class="w-full bg-gray-50 py-6 overflow-hidden border-t-4 border-b-4 border-indigo-100">
+    <div class="flex space-x-6 animate-scroll-left">
+        
+        <img src="{{ url_for('static', filename='uploads/image2.jpg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+        <img src="{{ url_for('static', filename='uploads/image11.jpg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+        <img src="{{ url_for('static', filename='uploads/image22.jpg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+        <img src="{{ url_for('static', filename='uploads/d1.jpeg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+        <img src="{{ url_for('static', filename='uploads/d2.jpeg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+        <img src="{{ url_for('static', filename='uploads/d3.jpeg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+        <img src="{{ url_for('static', filename='uploads/d4.jpg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+        <img src="{{ url_for('static', filename='uploads/d5.jpeg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+        
+        <img src="{{ url_for('static', filename='uploads/d1.jpeg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+        <img src="{{ url_for('static', filename='uploads/d2.jpeg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+        <img src="{{ url_for('static', filename='uploads/d3.jpeg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+        <img src="{{ url_for('static', filename='uploads/d4.jpg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+        <img src="{{ url_for('static', filename='uploads/d5.jpeg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+        <img src="{{ url_for('static', filename='uploads/image2.jpg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+        <img src="{{ url_for('static', filename='uploads/image11.jpg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+        <img src="{{ url_for('static', filename='uploads/image22.jpg') }}" class="h-52 w-auto object-cover rounded-xl shadow-xl hover:shadow-2xl transition duration-300">
+
+    </div>
+</div>
 
 <div class="fixed left-0 top-1/2 transform -translate-y-1/2 z-50">
     
