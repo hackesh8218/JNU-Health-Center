@@ -24,6 +24,16 @@
 </head>
 
 <body class="min-h-screen flex flex-col">
+  <header class="header-bg shadow-md">
+        <div class="container mx-auto flex items-center">
+            <img src="/static/uploads/JNUlogo.jpeg" alt="JNU Logo" class="header-logo" />
+            <div class="header-text">
+                <h1>JNU Health Centre</h1>
+                <p>Online Specialist Consultations & Part Time Psychology Services</p>
+            </div>
+        </div>
+  
+    </header>
 
     <!-- Custom Modal for Confirmation -->
     <div id="confirmation-modal" class="modal-overlay">
@@ -87,7 +97,7 @@
                 </div>
             </div>
 
-            <!-- Total Assigned Patients -->
+            <!-- Total Assigned Patients -->az
             <div class="stat-card border-orange-500">
                 <div class="flex items-center justify-between">
                     <div>
@@ -103,10 +113,10 @@
             <!-- Availability Status & Action -->
             <div class="stat-card border-green-500 flex flex-col justify-center">
                 <p class="text-md text-gray-500 font-medium">Current Status</p>
-                <div class="flex justify-between items-center mt-2">
-                    <p id="availability-status" class="text-3xl font-bold text-green-700">Available</p>
-                    <button onclick="showMessage('Navigating to availability settings...', 'info')" class="btn-primary bg-green-600 hover:bg-green-700 px-4 py-2">Set Availability</button>
-                </div>
+                <button onclick="window.location.href='/doctor-avail'" 
+                        class="btn-primary bg-green-600 hover:bg-green-700 px-4 py-2">
+                    Set Availability
+                </button>
             </div>
         </div>
 
@@ -137,11 +147,21 @@
                                 <td class="px-4 py-4">
                                     {{ appt.date }} {{ appt.time }}
                                 </td>
-                                <td class="px-4 py-4 space-x-2">
-                                    <a href="/appointment/{{ appt.appointment_id }}" class="btn-view">View/Update</a>
-                                    <a href="/cancel-appointment/{{ appt.appointment_id }}" class="btn-danger">Cancel</a>
-                                </td>
-                            </tr>
+                               <td class="px-4 py-4 space-x-3 whitespace-nowrap">
+                                  <a href="/request-history/{{ appt.appointment_id }}" 
+                                    class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                                      View/Update
+                                  </a>
+
+                                  <form action="/cancel-appointment/{{ appt.appointment_id }}" method="POST" style="display:inline;">
+                                      <button type="submit" 
+                                              class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out"
+                                              onclick="return confirm('Are you sure you want to cancel this appointment?');">
+                                          Cancel
+                                      </button>
+                                  </form>
+                              </td>
+                                                          </tr>
                             {% endfor %}
 
                             {% if appointments|length == 0 %}

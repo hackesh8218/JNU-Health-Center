@@ -350,10 +350,8 @@ def doctor_login():
     # GET request — show login page
     return render_template("doctor_login.html")
 
-        
-@app.route("/update_patient_data",methods=["GET","POST"])
-def update_patient_data():
-   return render_template("update_patient_history.html")
+
+
 
 @app.route("/doctor-avail",methods=["GET","POST"])
 def doctor_avail():
@@ -363,7 +361,7 @@ def doctor_avail():
 def logout():
    return render_template("doctor_login.html")
 
-@app.route("/cancel-appointment/<int:appt_id>", methods=["POST"])
+@app.route("/cancel-appointment/<int:appt_id>", methods=["POST","GET"])
 def cancel_appointment(appt_id):
     user_id = session.get('user_id')
     if not user_id:
@@ -374,12 +372,12 @@ def cancel_appointment(appt_id):
     # Optional: prevent others from canceling others' appointments
     if appointment.user_id != user_id:
         flash("Unauthorized access", "danger")
-        return redirect("/appointments")
+        return redirect("/doctor-dash")
 
     db.session.delete(appointment)
     db.session.commit()
     flash("Appointment cancelled successfully!", "success")
-    return redirect(url_for("appointments"))  # or wherever your list page is
+    return redirect("/doctor-dash")  # or wherever your list page is
 
 @app.route("/add_department", methods=["GET", "POST"])
 def add_department():
