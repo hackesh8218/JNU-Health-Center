@@ -32,13 +32,48 @@
         .bg-green-500:hover { border-color: #34D399; }
         .bg-red-500:hover { border-color: #F87171; }
         .bg-yellow-600:hover { border-color: #FBBF24; }
+                .header-bg {
+            background-image: linear-gradient(to right, #4CAF50, #2196F3);
+            background-size: cover;
+            background-position: center;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+        }
+        .header-logo {
+            height: 80px;
+            width: 80px;
+            margin-right: 20px;
+            border-radius: 50%; 
+            object-fit: cover;
+        }
+        .header-text h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+        .header-text p {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen pb-12">
 
     <!-- 2. HEADER BAR (Gradient Admin Style) -->
     <header class="w-full bg-gradient-to-r from-teal-400 to-blue-500 shadow-xl">
-        <div class="container mx-auto px-6 py-4 flex justify-end items-center space-x-8">
+      <div class="container mx-auto px-6 py-4 flex justify-end items-center space-x-8">
+          <div class="container mx-auto flex items-center">
+                <img src="/static/uploads/JNUlogo.jpeg" alt="JNU Logo" class="header-logo" />
+                <div class="header-text">
+                    <h1>JNU Health Centre</h1>
+                    <p>Online Specialist Consultations & Part Time Psychology Services</p>
+                </div>
+            </div>
             
             <!-- Welcome Message -->
             <div class="flex items-center space-x-2">
@@ -46,29 +81,32 @@
                 <span class="text-xl font-extrabold text-blue-800 bg-white px-2 py-0.5 rounded-md shadow-lg">{{this_user.name}}</span>
             </div>
             
-            <!-- NEW: Search Form with Dropdown Selector -->
-            <form class="flex items-center space-x-0">
+            <!-- NEW: Search Form with Dropdown Selector (FUNCTIONALIZED) -->
+            <form class="flex items-center space-x-0" action="/search" method="GET">
                 
+                <!-- Hidden input to store selected search type -->
+                <input type="hidden" name="search_type" id="search_type_input" value="Patient">
+
                 <!-- Search Type Dropdown -->
-                <div class="relative group">
-                    <button type="button" class="bg-white text-gray-700 px-3 py-2 border-2 border-r-0 border-orange-500 rounded-l-lg hover:bg-gray-100 transition duration-150 font-semibold text-sm shadow-md flex items-center space-x-1 focus:outline-none">
-                        <span>Search Type</span>
+                <div class="relative group" id="search-dropdown-container">
+                    <button type="button" id="search-type-button" class="bg-white text-gray-700 px-3 py-2 border-2 border-r-0 border-orange-500 rounded-l-lg hover:bg-gray-100 transition duration-150 font-semibold text-sm shadow-md flex items-center space-x-1 focus:outline-none">
+                        <span id="selected-search-text">Patient</span>
                         <i class="fas fa-chevron-down text-xs ml-1 transition-transform duration-300 group-hover:rotate-180"></i>
                     </button>
                     
                     <!-- Dropdown Content -->
-                    <div class="absolute left-0 mt-0 w-40 rounded-lg shadow-xl bg-white ring-1 ring-black ring-opacity-5 opacity-0 group-hover:opacity-100 transform scale-95 group-hover:scale-100 transition ease-out duration-200 origin-top z-30">
+                    <div id="dropdown-content" class="absolute left-0 mt-0 w-40 rounded-lg shadow-xl bg-white ring-1 ring-black ring-opacity-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transform scale-95 group-hover:scale-100 transition ease-out duration-200 origin-top z-30">
                         <div class="py-1">
-                            <!-- Dropdown Link 1: Patient (Clicking should enable patient search logic) -->
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 hover:text-indigo-900 transition duration-150 ease-in-out flex items-center space-x-2">
+                            <!-- Dropdown Link 1: Patient (Clicking enables patient search logic) -->
+                            <a href="#" data-search-value="Patient" data-placeholder="Search Patient Name" class="search-option block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 hover:text-indigo-900 transition duration-150 ease-in-out flex items-center space-x-2">
                                 <i class="fas fa-user"></i> <span>Patient</span>
                             </a>
-                            <!-- Dropdown Link 2: Doctor (Clicking should enable doctor search logic, e.g., to /doctor-profile) -->
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 hover:text-indigo-900 transition duration-150 ease-in-out flex items-center space-x-2">
+                            <!-- Dropdown Link 2: Doctor (Clicking enables doctor search logic) -->
+                            <a href="#" data-search-value="Doctor" data-placeholder="Search Doctor Name" class="search-option block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 hover:text-indigo-900 transition duration-150 ease-in-out flex items-center space-x-2">
                                 <i class="fas fa-user-md"></i> <span>Doctor</span>
                             </a>
-                            <!-- Dropdown Link 3: Department (Clicking should enable department search logic, e.g., to /avail-department) -->
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 hover:text-indigo-900 transition duration-150 ease-in-out flex items-center space-x-2">
+                            <!-- Dropdown Link 3: Department (Clicking enables department search logic) -->
+                            <a href="#" data-search-value="Department" data-placeholder="Search Department Name" class="search-option block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 hover:text-indigo-900 transition duration-150 ease-in-out flex items-center space-x-2">
                                 <i class="fas fa-hospital-alt"></i> <span>Department</span>
                             </a>
                         </div>
@@ -76,9 +114,9 @@
                 </div>
 
                 <!-- Search Input and Button -->
-                <input type="search" placeholder="Search Patients/Doctors/Dept" aria-label="Search"
+                <input type="search" name="query" id="search-input-field" placeholder="Search Patient Name" aria-label="Search"
                         class="w-64 px-4 py-2 border-2 border-orange-500 focus:outline-none focus:ring-4 focus:ring-orange-300 focus:border-orange-600 transition duration-150 shadow-md text-gray-700">
-                <button class="bg-orange-600 text-white px-5 py-2 border-2 border-orange-600 rounded-r-lg hover:bg-orange-700 transition-colors duration-200 font-bold shadow-md">
+                <button type="submit" class="bg-orange-600 text-white px-5 py-2 border-2 border-orange-600 rounded-r-lg hover:bg-orange-700 transition-colors duration-200 font-bold shadow-md">
                     <i class="fas fa-search"></i>
                 </button>
             </form>
@@ -95,6 +133,33 @@
 
     <!-- Main Content Area -->
     <div class="container mx-auto px-6 mt-8">
+
+        <!-- NEW SECTION: QUICK CREATION ACTIONS -->
+        <div class="bg-white p-6 rounded-xl shadow-xl mb-8 border-t-4 border-blue-500">
+            <h3 class="text-2xl font-bold text-blue-800 mb-4">Quick Admin Actions</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- Add New Doctor -->
+                <a href="{{ url_for('add_doctor') }}" class="flex items-center justify-center p-4 bg-green-500 text-white font-bold rounded-lg shadow-lg hover:bg-green-600 transition-colors duration-200 space-x-2 transform hover:scale-[1.02]">
+                    <i class="fas fa-user-plus h-6 w-6"></i>
+                    <span>Add New Doctor</span>
+                </a>
+
+                <!-- Add New Department -->
+                <a href="{{ url_for('add_department') }}" class="flex items-center justify-center p-4 bg-purple-500 text-white font-bold rounded-lg shadow-lg hover:bg-purple-600 transition-colors duration-200 space-x-2 transform hover:scale-[1.02]">
+                    <i class="fas fa-hospital-alt h-6 w-6"></i>
+                    <span>Add New Dept.</span>
+                </a>
+
+                <!-- Example: View Pending Approvals -->
+                <a href="#" class="flex items-center justify-center p-4 bg-orange-500 text-white font-bold rounded-lg shadow-lg hover:bg-orange-600 transition-colors duration-200 space-x-2 transform hover:scale-[1.02]">
+                    <i class="fas fa-bell h-6 w-6"></i>
+                    <span>View Approvals</span>
+                </a>
+
+            </div>
+        </div>
+        <!-- End Quick Actions -->
 
         <!-- 3. Dashboard Metrics Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -297,10 +362,16 @@
                             <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">{{ record.doctor }}</td>
                             <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">{{ record.date }}</td>
                             <td class="px-3 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ record.history_link }}" class="text-blue-600 hover:text-blue-800 font-medium hover:underline">View History</a>
+                                <!-- STYLING UPDATE: Patient History Button -->
+                                <a href="{{ record.history_link }}" class="inline-block group">
+                                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-1.5 text-xs rounded-lg shadow-md transition duration-150 ease-in-out transform hover:scale-105 flex items-center space-x-1">
+                                        <i class="fas fa-notes-medical mr-1"></i>
+                                        <span>View History</span>
+                                    </button>
+                                </a>
                             </td>
                             <td class="px-3 py-4 whitespace-nowrap text-sm font-medium">
-                                <!-- UPDATED: Show Lab Report Button -->
+                                <!-- Show Lab Report Button -->
                                 <a href="{{ record.lab_link }}" class="inline-block group">
                                     <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-3 py-1.5 text-xs rounded-lg shadow-md transition duration-150 ease-in-out transform hover:scale-105 flex items-center space-x-1">
                                         <i class="fas fa-file-medical mr-1"></i>
@@ -325,7 +396,7 @@
 
         <!-- Table 3: Upcoming Appointments (Full Width - Removed View History button) -->
         <div class="bg-white p-6 rounded-2xl shadow-2xl border-t-8 border-indigo-600 mt-8">
-            <h3 class="text-2xl font-extrabold text-blue-800 pb-1 border-b-4 border-orange-500">
+            <h3 class="text-2xl font-extrabold text-blue-800 pb-1 border-b-4 border-orange-500 mb-6">
                 <i class="fas fa-calendar-check mr-2 text-indigo-600"></i>Upcoming Appointments ({{ appointment_list | length }})
             </h3>
             <div class="overflow-x-auto">
@@ -374,5 +445,61 @@
 
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchDropdownContainer = document.getElementById('search-dropdown-container');
+            const searchTypeButton = document.getElementById('search-type-button');
+            const selectedSearchText = document.getElementById('selected-search-text');
+            const searchTypeInput = document.getElementById('search_type_input');
+            const searchInputField = document.getElementById('search-input-field');
+            const searchOptions = document.querySelectorAll('.search-option');
+            const dropdownContent = document.getElementById('dropdown-content');
+
+            // Set initial state
+            selectedSearchText.textContent = searchTypeInput.value;
+            searchInputField.placeholder = "Search " + searchTypeInput.value + " Name";
+
+            // Toggle dropdown visibility on button click (fallback for non-hover interaction)
+            searchTypeButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                dropdownContent.classList.toggle('opacity-0');
+                dropdownContent.classList.toggle('pointer-events-none');
+                dropdownContent.classList.toggle('scale-95');
+                dropdownContent.classList.toggle('opacity-100');
+                dropdownContent.classList.toggle('scale-100');
+            });
+
+            // Handle selection of a search type
+            searchOptions.forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    const value = option.getAttribute('data-search-value');
+                    const placeholder = option.getAttribute('data-placeholder');
+                    
+                    // Update form values
+                    selectedSearchText.textContent = value;
+                    searchTypeInput.value = value;
+                    searchInputField.placeholder = placeholder;
+                    
+                    // Close dropdown manually (in case it was opened by click)
+                    dropdownContent.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                    dropdownContent.classList.remove('opacity-100', 'scale-100');
+                    
+                    // Optional: You can navigate here if the requirement was to navigate immediately,
+                    // but since this is a search bar, updating the form values is correct.
+                    // For example: if (value === 'Department') { window.location.href = '/avail-department'; }
+                });
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!searchDropdownContainer.contains(e.target)) {
+                    dropdownContent.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                    dropdownContent.classList.remove('opacity-100', 'scale-100');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

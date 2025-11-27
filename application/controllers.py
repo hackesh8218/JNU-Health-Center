@@ -465,31 +465,33 @@ def is_role(expected_role):
 
 @app.route("/admin-dash")
 def admin_dash():
-    
+
     if not is_role('admin'):
         flash("Unauthorized access.", "danger")
         return redirect(url_for('login'))
-        
+
     user_id = session.get('user_id')
     this_user = User.query.get(user_id)
-    
-    # === Total Counts for Dashboard Cards ===
+
+    # === Dashboard Counts ===
     doctor_count = Doctor.query.count()
     patient_count = User.query.filter_by(role='patient').count()
-    
 
-    # === Doctors List Table ===
-  
+    # === Doctors and Patients List ===
     doctors_list = Doctor.query.all()
-    patient_list = User.query.filter_by(role="patient").all()  
-    # === Upcoming Appointments (JOIN FIXED) ===
+    patient_list = User.query.filter_by(role="patient").all()
+
+    # === Departments List (ADDED) ===
+    departments_list = Department.query.all()
+
+    # === Latest 10 Appointments (JOIN FIXED) ===
     upcoming_appts = db.session.query(
         Appointment,
         User.name.label("patient_name"),
         Doctor.name.label("doctor_name"),
         Department.name.label("dept_name")
     ).join(
-        User, Appointment.user_id == User.user_id  # patient name
+        User, Appointment.user_id == User.user_id
     ).join(
         Doctor, Appointment.doctor_id == Doctor.doctor_id
     ).join(
@@ -504,9 +506,11 @@ def admin_dash():
         doctors_list=doctors_list,
         doctor_count=doctor_count,
         patient_count=patient_count,
-        patient_list=patient_list, 
-        appointment_list=upcoming_appts
+        patient_list=patient_list,
+        appointment_list=upcoming_appts,
+        departments_list=departments_list   # <-- ADDED
     )
+
 
 
 
