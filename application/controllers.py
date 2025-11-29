@@ -399,12 +399,12 @@ def cancel_appointment(appt_id):
     # Optional: prevent others from canceling others' appointments
     if appointment.user_id != user_id:
         flash("Unauthorized access", "danger")
-        return redirect("/doctor-dash")
+        return redirect("/patient-dash")
 
     db.session.delete(appointment)
     db.session.commit()
     flash("Appointment cancelled successfully!", "success")
-    return redirect("/doctor-dash")  # or wherever your list page is
+    return redirect("/patient-dash")  # or wherever your list page is
 
 @app.route("/add_department", methods=["GET", "POST"])
 def add_department():
