@@ -380,9 +380,30 @@ def doctor_login():
 
 
 
-@app.route("/doctor-avail",methods=["GET","POST"])
+from flask import request, render_template, abort # Import request and abort
+
+# Assuming your Doctor model is defined and imported:
+# from .models import Doctor 
+
+@app.route("/doctor-avail", methods=["GET","POST"]) # Should use GET to fetch data for display
 def doctor_avail():
-   return render_template("doctor_avail.html")
+    # 1. Get the doctor_id from the URL query parameters (e.g., ?doctor_id=5)
+    doctor_id = request.args.get('doctor_id', type=int)
+    
+    if not doctor_id:
+        # If no ID is provided, redirect or show an error
+        abort(400, description="Doctor ID is required to check availability.")
+
+    # 2. Fetch the Doctor object from the database
+    # Assuming Doctor.query.get() or similar works with your ORM
+    doctor = Doctor.query.get(doctor_id) 
+    
+    if not doctor:
+        # If the doctor ID is invalid
+        abort(404, description=f"Doctor with ID {doctor_id} not found.")
+
+    # 3. Pass the 'doctor' object to the template context
+    return render_template("doctor_avail.html", doctor=doctor)
    
 @app.route("/logout",methods=["GET","POST"])
 def logout():

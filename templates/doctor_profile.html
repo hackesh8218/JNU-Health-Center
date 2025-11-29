@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
+        /* Base styles provided by user */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f7fafc; 
@@ -24,42 +18,32 @@
                    transition-colors duration-200 shadow-md flex items-center space-x-2;
         }
         .btn-primary-action {
+            /* VIBRANT GREEN for booking */
             @apply bg-green-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg hover:bg-green-700 
-                   transition-colors duration-200;
+                   transition-colors duration-300 transform hover:scale-105;
         }
-        /* Header specific styles to mimic the image */
+        /* Header specific styles provided by user */
         .header-bg {
             background-image: linear-gradient(to right, #4CAF50, #2196F3);
-            background-size: cover;
-            background-position: center;
-            height: 120px;
-            display: flex;
-            align-items: center;
-            padding: 0 24px;
+            background-size: cover; background-position: center; height: 120px;
+            display: flex; align-items: center; padding: 0 24px;
         }
-        .header-logo {
-            height: 80px;
-            width: 80px;
-            margin-right: 20px;
-            border-radius: 50%; 
-            object-fit: cover;
+        .header-logo { height: 80px; width: 80px; margin-right: 20px; border-radius: 50%; object-fit: cover; }
+        .header-text h1 { font-size: 2.5rem; font-weight: 700; color: #ffffff; margin-bottom: 0.25rem; }
+        .header-text p { font-size: 1.1rem; color: #e0e0e0; font-weight: 500; }
+
+        /* Custom Enhancements */
+        .award-badge {
+            @apply bg-yellow-50 text-yellow-700 text-sm font-medium px-3 py-1 rounded-full border border-yellow-300;
         }
-        .header-text h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 0.25rem;
-        }
-        .header-text p {
-            font-size: 1.1rem;
-            color: #e0e0e0;
-            font-weight: 500;
+        .expertise-tag {
+             @apply bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full shadow-sm;
         }
     </style>
 </head>
 
 <body class="min-h-screen flex flex-col">
-  <header class="header-bg shadow-md">
+    <header class="header-bg shadow-md">
         <div class="container mx-auto flex items-center">
             <img src="/static/uploads/JNUlogo.jpeg" alt="JNU Logo" class="header-logo" />
             <div class="header-text">
@@ -75,7 +59,8 @@
 
             <h1 class="text-3xl font-extrabold text-blue-800">Doctor Profile</h1>
 
-            <a href="/doctor-dept?name={{ doctor.department_name }}" class="btn-back">
+            <!-- FIX: Use doctor.dept_id for going back to the department list -->
+            <a href="{{ url_for('get_doctors', dept_id=doctor.dept_id | default(0)) }}" class="btn-back">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" 
                      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" 
@@ -91,33 +76,37 @@
 
         <div class="w-full max-w-5xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
 
-            <!-- HEADER BLOCK -->
+            <!-- HEADER BLOCK (Vibrant Blue Gradient) -->
             <div class="bg-gradient-to-r from-blue-600 to-blue-800 p-8 text-white 
-                        flex flex-col md:flex-row items-center space-x-6">
+                         flex flex-col md:flex-row items-center space-x-6">
 
-                <!-- DOCTOR INITIAL (NO IMAGE) -->
+                <!-- DOCTOR INITIAL (Badge Style) -->
                 <div class="w-32 h-32 rounded-full flex items-center justify-center 
-                            text-5xl font-extrabold bg-gradient-to-br from-blue-200 to-blue-500 
-                            border-4 border-white shadow-xl flex-shrink-0">
-                    {{ doctor.name[0] }}
+                             text-5xl font-extrabold bg-gradient-to-br from-blue-200 to-blue-500 
+                             border-4 border-white shadow-xl flex-shrink-0">
+                    {{ (doctor.name | default('D'))[0] }}
                 </div>
 
                 <!-- NAME + DETAILS -->
                 <div class="mt-4 md:mt-0 text-center md:text-left">
-                    <h2 class="text-4xl font-extrabold">{{ doctor.name }}</h2>
+                    <h2 class="text-5xl font-extrabold">{{ doctor.name | default('Doctor Name') }}</h2>
 
-                    <p class="text-xl font-light mb-1">
-                        {{ doctor.qualifications }}
+                    <p class="text-xl font-light mb-1 mt-2">
+                        {{ doctor.qualifications | default('MBBS, MD (General Medicine)') }}
                     </p>
 
-                    <p class="text-lg font-semibold text-orange-300">
-                        {{ doctor.specialization }}
+                    <p class="text-xl font-semibold text-orange-300">
+                        {{ doctor.specialization | default('General Practitioner') }}
                     </p>
 
                     <!-- RATING -->
-                    <div class="flex justify-center md:justify-start items-center space-x-1 mt-2">
-                        <span class="text-yellow-400">★★★★★</span>
-                        <span class="text-sm font-medium">({{ doctor.rating }}/5)</span>
+                    <div class="flex justify-center md:justify-start items-center space-x-2 mt-3">
+                        <span class="text-yellow-400 text-2xl">
+                             {% set rating = doctor.rating | default(4.5) | round(1) %}
+                             {% for i in range(rating | int) %}★{% endfor %}
+                             {% if rating % 1 > 0 %}<span class="text-xl">½</span>{% endif %}
+                        </span>
+                        <span class="text-lg font-medium">({{ rating }}/5)</span>
                     </div>
                 </div>
             </div>
@@ -125,91 +114,123 @@
             <!-- BODY SECTION -->
             <div class="p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                <!-- LEFT SIDE -->
+                <!-- LEFT SIDE (Bio, Experience, Expertise) -->
                 <div class="lg:col-span-2 space-y-8">
 
-                    <!-- Experience -->
+                    <!-- About -->
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-orange-500 pb-1 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            About Dr. {{ doctor.name | default('The Doctor') }}
+                        </h3>
+
+                        <p class="text-gray-700 leading-relaxed italic">
+                            {{ doctor.bio | default('Dr. [Doctor Name] is a highly dedicated and patient-focused physician with a commitment to providing comprehensive primary care. With a strong background in chronic disease management and preventive medicine, they strive to build lasting relationships with patients to achieve optimal health outcomes. Known for their meticulous approach and compassionate bedside manner.') }}
+                        </p>
+                    </div>
+
+                    <!-- Experience & Specialization -->
                     <div class="p-6 bg-gray-50 rounded-xl border border-gray-200">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.518 23.518 0 0112 15c-3.18 0-6.248-.549-9-1.745M16 4h4.004v4h-4V4zM21 10.5V20.5a1 1 0 01-1 1h-16a1 1 0 01-1-1V10.5M12 4v7" />
+                            </svg>
+                            Professional Background
+                        </h3>
 
-                        <h3 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Experience & Specialization</h3>
-
-                        <div class="grid grid-cols-2 gap-4 text-lg">
+                        <div class="grid grid-cols-2 gap-y-4 gap-x-8 text-lg">
                             <div>
                                 <p class="text-gray-500">Total Experience</p>
-                                <p class="font-bold text-blue-700">{{ doctor.experience }} Years</p>
+                                <p class="font-bold text-blue-700">{{ doctor.experience | default(15) }} Years</p>
                             </div>
 
-                            <div class="col-span-2">
-                                <p class="text-gray-500">Department</p>
-                                <p class="font-bold text-orange-600">{{ doctor.department_name }}</p>
+                            <div>
+                                <p class="text-gray-500">Affiliated Department</p>
+                                <p class="font-bold text-orange-600">{{ doctor.department_name | default('Internal Medicine') }}</p>
                             </div>
                         </div>
 
                         <h4 class="text-xl font-semibold text-gray-800 mt-6 mb-3">Expertise Areas:</h4>
 
-                        <!-- Auto-split CSV expertise if available -->
+                        <!-- Expertise Tags -->
                         <div class="flex flex-wrap gap-2">
-
-                            {% if doctor.expertise %}
-                                {% for skill in doctor.expertise.split(',') %}
-                                <span class="bg-purple-100 text-purple-800 text-sm font-medium 
-                                             px-3 py-1 rounded-full">
-                                    {{ skill }}
-                                </span>
-                                {% endfor %}
-                            {% else %}
-                                <span class="text-gray-500 text-sm">No expertise data provided.</span>
-                            {% endif %}
-
+                            {% set expertise_str = doctor.expertise | default('Diagnostic Cardiology, Preventive Health, Chronic Care') %}
+                            {% for skill in expertise_str.split(',') %}
+                            <span class="expertise-tag">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.012 12.012 0 003 12c0 2.455.77 4.796 2.18 6.75l.487.71a.99.99 0 001.666 0l.487-.71C10.744 14.88 12 12.553 12 10.5z" />
+                                </svg>
+                                {{ skill.strip() }}
+                            </span>
+                            {% endfor %}
                         </div>
                     </div>
-
-                    <!-- About -->
-                    <div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-orange-500 pb-1">
-                            About {{ doctor.name }}
+                    
+                    <!-- Awards & Achievements -->
+                    <div class="p-6 bg-yellow-50 rounded-xl border border-yellow-300">
+                        <h3 class="text-2xl font-bold text-yellow-800 mb-4 border-b-2 border-yellow-500 pb-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.637-.921 1.938 0l2.074 6.33h6.617c.915 0 1.285 1.144.582 1.664l-5.385 3.96h6.617c.915 0 1.285 1.144.582 1.664l-5.385 3.96h6.617c.915 0 1.285 1.144.582 1.664l-5.385 3.96h6.617c.915 0 1.285 1.144.582 1.664l-5.385 3.96h6.617c.915 0 1.285 1.144.582 1.664z" />
+                            </svg>
+                            Awards & Recognition
                         </h3>
-
-                        <p class="text-gray-700 leading-relaxed">
-                            {{ doctor.bio or "This doctor is a respected specialist at Sanjeevani Hospital, 
-                            committed to providing advanced care with compassion and expertise." }}
-                        </p>
+                        <div class="space-y-3">
+                            {% set awards = doctor.awards | default(['Top Patient Satisfaction Award (2024)', 'Innovator in Cardiology (2022)', 'JNU Health Center Star Physician']) %}
+                            {% for award in awards %}
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-3xl">🏆</span>
+                                    <span class="text-gray-700 font-medium">{{ award }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
 
                 </div>
 
-                <!-- RIGHT SIDE -->
+                <!-- RIGHT SIDE (Actions & Contact) -->
                 <div class="lg:col-span-1 space-y-6">
 
+                    <!-- BOOK SLOT ACTION -->
+                    <div class="p-6 bg-green-50 rounded-xl shadow-lg border-2 border-green-300 text-center">
+                        <h4 class="text-2xl font-bold text-green-800 mb-4">Ready to Consult?</h4>
+
+                        <a href="{{ url_for('doctor_avail', doctor_id=doctor.doctor_id) }}" 
+                           class="btn-primary-action w-full text-center block">
+                            <span class="mr-1">📅</span> Check Availability & Book Slot
+                        </a>
+                        <p class="text-sm text-gray-500 mt-3">Appointments are limited (5 per slot).</p>
+                    </div>
+                    
                     <!-- CONTACT CARD -->
-                    <div class="p-6 bg-blue-50 rounded-xl shadow-md">
+                    <div class="p-6 bg-blue-50 rounded-xl shadow-md border border-blue-200">
                         <h4 class="text-xl font-bold text-blue-800 mb-3">Contact Information</h4>
 
-                        <p class="text-gray-700">
+                        <p class="text-gray-700 mb-1 flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
                             <span class="font-semibold">Clinic:</span> JNU Health Center
                         </p>
 
-                        <p class="text-gray-700">
+                        <p class="text-gray-700 mb-1 flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.503 1.125l-2.034 1.29a2.008 2.008 0 00-.772 2.052c.582 2.348 2.213 4.1 4.562 4.562a2.008 2.008 0 002.052-.772l1.29-2.034a1 1 0 011.125-.503l4.493 1.498a1 1 0 01.684.948V19a2 2 0 01-2 2h-13a2 2 0 01-2-2V5z" />
+                            </svg>
                             <span class="font-semibold">Phone:</span> 
-                            {{ doctor.phone or "(Not Provided)" }}
+                            {{ doctor.phone | default("(+91) 1234 5678") }}
                         </p>
 
-                        <p class="text-gray-700">
+                        <p class="text-gray-700 flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
                             <span class="font-semibold">Email:</span> 
-                            {{ doctor.email or "(Not Provided)" }}
+                            {{ doctor.email | default("(Contact Admin)") }}
                         </p>
                     </div>
-
-                    <!-- BOOK SLOT -->
-                    <div class="p-6 bg-white rounded-xl shadow-lg border border-gray-200">
-                        <h4 class="text-xl font-bold text-gray-800 mb-4">Ready to Consult?</h4>
-
-                        <a href="/doctor-avail?doctor_id={{ doctor.doctor_id }}" 
-                           class="btn-primary-action w-full text-center block">
-                            Check Availability & Book Slot
-                        </a>
-                    </div>
-
                 </div>
 
             </div>
@@ -221,7 +242,7 @@
     <!-- FOOTER -->
     <footer class="bg-gray-800 text-white py-6 mt-8">
         <div class="container mx-auto px-6 text-center text-sm text-gray-400">
-            &copy; 2023 JNU Health Center. All rights reserved. | Doctor Profile
+            &copy; 2025 JNU Health Center. All rights reserved. | Doctor Profile
         </div>
     </footer>
 

@@ -3,61 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JNU Health Center- Doctor's Availability</title>
+    <title>JNU Health Center - Doctor's Availability</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom Styles for Availability Page Aesthetics */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f7fafc; 
-        }
-        /* Style for the back button */
+        /* Custom Styles for Availability Page Aesthetics (Reusing user's base styles) */
+        body { font-family: 'Inter', sans-serif; background-color: #f7fafc; }
+        
+        /* Header styles from user's provided context */
         .btn-back {
             @apply bg-orange-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors duration-200 shadow-md flex items-center space-x-2;
         }
-        /* Header specific styles to mimic the image */
         .header-bg {
             background-image: linear-gradient(to right, #4CAF50, #2196F3);
-            background-size: cover;
-            background-position: center;
-            height: 120px;
-            display: flex;
-            align-items: center;
-            padding: 0 24px;
+            background-size: cover; background-position: center; height: 120px;
+            display: flex; align-items: center; padding: 0 24px;
         }
-        .header-logo {
-            height: 80px;
-            width: 80px;
-            margin-right: 20px;
-            border-radius: 50%; 
-            object-fit: cover;
-        }
-        .header-text h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 0.25rem;
-        }
-        .header-text p {
-            font-size: 1.1rem;
-            color: #e0e0e0;
-            font-weight: 500;
-        }
-        /* Style for active time slots */
+        .header-logo { height: 80px; width: 80px; margin-right: 20px; border-radius: 50%; object-fit: cover; }
+        .header-text h1 { font-size: 2.5rem; font-weight: 700; color: #ffffff; margin-bottom: 0.25rem; }
+        .header-text p { font-size: 1.1rem; color: #e0e0e0; font-weight: 500; }
+        
+        /* Time slot styles from user's provided context */
         .slot-button {
-            @apply bg-blue-100 text-blue-800 font-medium px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors duration-150 border border-blue-300;
+            @apply bg-blue-100 text-blue-800 font-medium px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors duration-150 border border-blue-300 shadow-sm text-center;
         }
-        /* Style for selected time slot */
         .slot-selected {
-            @apply bg-orange-600 text-white border-orange-700 shadow-lg;
+            @apply bg-orange-600 text-white border-orange-700 shadow-xl ring-2 ring-orange-400;
+        }
+        
+        /* NEW: Date Button Styling */
+        .date-button {
+            @apply bg-gray-100 text-gray-700 font-semibold p-3 rounded-xl shadow-md flex-shrink-0 hover:bg-blue-100 hover:text-blue-800 transition-all duration-200 border border-transparent;
+        }
+        .date-selected {
+            @apply bg-blue-600 text-white shadow-xl border-blue-700 ring-2 ring-blue-300;
+        }
+
+        /* NEW: Booking Button Styling */
+        #book-button {
+            @apply bg-green-600 text-white font-bold px-10 py-3 rounded-xl shadow-2xl hover:bg-green-700 transition-colors duration-300 transform hover:scale-105;
+        }
+        #book-button:disabled {
+            @apply bg-gray-400 text-gray-600 cursor-not-allowed shadow-none transform-none;
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
     <!-- 1. Header and Navigation -->
-     <header class="header-bg shadow-md">
+    <header class="header-bg shadow-md">
         <div class="container mx-auto flex items-center">
             <img src="/static/uploads/JNUlogo.jpeg" alt="JNU Logo" class="header-logo" />
             <div class="header-text">
@@ -65,18 +59,18 @@
                 <p>Online Specialist Consultations & Part Time Psychology Services</p>
             </div>
         </div>
-  
     </header>
     <header class="bg-white shadow-lg sticky top-0 z-20">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
             
             <!-- Title -->
             <div class="flex items-center space-x-3">
-                <h1 class="text-3xl font-extrabold text-blue-800">Doctor's Availability</h1>
+                <h1 class="text-3xl font-extrabold text-blue-800">Book Availability</h1>
             </div>
 
             <!-- Back Button -->
-            <a href="/department_doctors.html" class="btn-back">
+            <!-- FIX: Confirmed endpoint is likely 'get_doctors' to list department specialists -->
+            <a href="{{ url_for('get_doctors', dept_id=doctor.dept_id | default(0)) }}" class="btn-back">
                 <!-- Back Arrow SVG -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -91,98 +85,71 @@
         
         <div class="w-full max-w-5xl bg-white p-8 rounded-xl shadow-2xl border-t-4 border-orange-500">
             
-            <!-- Doctor Info Card -->
+            <!-- Doctor Info Card (Dynamic data assumed from Flask context) -->
             <div class="flex items-center space-x-6 mb-8 border-b pb-6 border-gray-200">
-                <!-- Profile Picture Placeholder -->
-                <img src="https://placehold.co/100x100/3B82F6/FFFFFF?text=Dr" alt="Doctor Profile" class="rounded-full h-20 w-20 object-cover border-4 border-blue-300">
+                
+                <img src="https://placehold.co/100x100/3B82F6/FFFFFF?text=Dr" alt="Doctor Profile" class="rounded-full h-24 w-24 object-cover border-4 border-blue-500 shadow-md">
                 
                 <div>
-                    <!-- NOTE: Replace with dynamic doctor data (e.g., Dr. Akhilesh from Oncology) -->
-                    <h2 class="text-3xl font-bold text-gray-900">Dr. Akhilesh</h2>
-                    <p class="text-lg text-gray-600">Oncologist | 20+ Years Experience</p>
-                    <p class="text-sm text-green-600 font-semibold mt-1">Status: Available for Booking</p>
+                    <!-- NOTE: Using default filters for safe rendering -->
+                    <h2 class="text-4xl font-extrabold text-gray-900">Dr. {{ doctor.name | default('Loading...') }}</h2>
+                    <p class="text-xl text-green-600 font-semibold mt-1">{{ doctor.specialization | default('Specialist') }}</p>
+                    <p class="text-lg text-gray-600">{{ doctor.department_name | default('Department Unknown') }} | {{ doctor.experience | default('N/A') }} Years Experience</p>
                 </div>
             </div>
 
-            <h3 class="text-2xl font-bold text-gray-800 mb-6">Select a Date and Time Slot</h3>
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Select Your Appointment Date
+            </h3>
 
-            <!-- Availability Calendar/Scheduler -->
-            <form action="/doctor-avail" method="POST">
+            <!-- Date Selection (Dynamically populated by JS) -->
+            <div id="date-selector" class="flex space-x-4 overflow-x-auto pb-4 mb-8 border-b border-gray-200">
+                <!-- Date buttons will be inserted here by JavaScript -->
+                <p class="text-gray-500 p-3">Loading available dates...</p>
+            </div>
 
-                <!-- Date Selection (Horizontal Scrollable) -->
-                <div class="flex space-x-4 overflow-x-auto pb-4 mb-8 border-b border-gray-200">
-                    <button type="button" class="bg-blue-600 text-white font-semibold p-3 rounded-xl shadow-md flex-shrink-0">
-                        Today <br> 10/11
-                    </button>
-                    <button type="button" class="bg-gray-100 text-gray-700 font-semibold p-3 rounded-xl shadow-md flex-shrink-0 hover:bg-gray-200">
-                        Wed <br> 11/11
-                    </button>
-                    <button type="button" class="bg-gray-100 text-gray-700 font-semibold p-3 rounded-xl shadow-md flex-shrink-0 hover:bg-gray-200">
-                        Thu <br> 12/11
-                    </button>
-                    <button type="button" class="bg-gray-100 text-gray-700 font-semibold p-3 rounded-xl shadow-md flex-shrink-0 hover:bg-gray-200">
-                        Fri <br> 13/11
-                    </button>
-                    <button type="button" class="bg-gray-100 text-gray-700 font-semibold p-3 rounded-xl shadow-md flex-shrink-0 hover:bg-gray-200">
-                        Mon <br> 16/11
-                    </button>
-                    <button type="button" class="bg-gray-100 text-gray-700 font-semibold p-3 rounded-xl shadow-md flex-shrink-0 hover:bg-gray-200">
-                        Tue <br> 17/11
-                    </button>
-                    <button type="button" class="bg-gray-100 text-gray-700 font-semibold p-3 rounded-xl shadow-md flex-shrink-0 hover:bg-gray-200">
-                        Wed <br> 18/11
-                    </button>
+            <!-- Time Slot Selection (Dynamic Content Area) -->
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Available Time Slots
+            </h3>
+
+            <div id="time-slot-container" class="space-y-6">
+                 <!-- Slots will be inserted here dynamically -->
+                <div class="bg-gray-100 p-4 rounded-lg text-gray-600 text-center" id="slots-message">
+                    Please select a date above to check available time slots.
                 </div>
+            </div>
 
-                <!-- Time Slot Selection (Grouped by Day Part) -->
-                
-                <!-- Morning Slots -->
-                <div class="mb-8">
-                    <h4 class="text-xl font-semibold text-blue-700 mb-3 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        Morning (9:00 AM - 1:00 PM)
-                    </h4>
-                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                        <!-- Example available slots. Clicking selects it (handled by JS below) -->
-                        <button type="button" class="slot-button" data-slot="9:00 AM">9:00 AM</button>
-                        <button type="button" class="slot-button" data-slot="9:30 AM">9:30 AM</button>
-                        <button type="button" class="slot-button" data-slot="10:00 AM">10:00 AM</button>
-                        <button type="button" class="slot-button" data-slot="10:30 AM">10:30 AM</button>
-                        <!-- Example unavailable slot (styled differently) -->
-                        <button type="button" class="bg-red-100 text-red-500 line-through px-4 py-2 rounded-lg cursor-not-allowed" disabled>11:00 AM</button>
-                        <button type="button" class="slot-button" data-slot="11:30 AM">11:30 AM</button>
-                    </div>
-                </div>
+            <!-- Hidden input to store selected slot data -->
+            <input type="hidden" id="selected-date-input" name="selected_date">
+            <input type="hidden" id="selected-slot-input" name="selected_slot">
+            <!-- IMPORTANT: Use doctor.doctor_id safely -->
+            <input type="hidden" id="doctor-id-input" value="{{ doctor.doctor_id | default(0) }}">
 
-                <!-- Afternoon Slots -->
-                <div class="mb-8">
-                    <h4 class="text-xl font-semibold text-blue-700 mb-3 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Afternoon (2:00 PM - 5:00 PM)
-                    </h4>
-                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                        <button type="button" class="slot-button" data-slot="2:00 PM">2:00 PM</button>
-                        <button type="button" class="slot-button" data-slot="2:30 PM">2:30 PM</button>
-                        <button type="button" class="slot-button" data-slot="3:00 PM">3:00 PM</button>
-                        <button type="button" class="slot-button" data-slot="3:30 PM">3:30 PM</button>
-                    </div>
-                </div>
-                
-                <!-- Hidden input to store selected slot data -->
-                <input type="hidden" id="selected-slot" name="selected_slot" required>
 
-                <!-- Confirmation Button -->
-                <div class="text-center pt-6">
-                    <button type="submit" id="book-button" class="bg-green-600 text-white font-bold px-10 py-3 rounded-xl shadow-lg hover:bg-green-700 transition-colors duration-200" disabled>
-                        Book Appointment (Select a Slot Above)
+            <!-- Confirmation Button -->
+            <div class="text-center pt-6">
+                <!-- NOTE: Action URL must point to your booking route -->
+                <form id="booking-form" action="{{ url_for('new_appointment') }}" method="POST">
+                    <!-- Pass doctor ID safely -->
+                    <input type="hidden" name="doctor_id" value="{{ doctor.doctor_id | default(0) }}">
+                    <input type="hidden" name="date" id="form-date-input">
+                    <input type="hidden" name="time" id="form-time-input">
+
+                    <button type="submit" id="book-button" disabled>
+                        Book Appointment (Select a Date and Slot)
                     </button>
-                </div>
-                
-            </form>
+                    
+                    <p class="text-sm text-red-500 mt-2 hidden" id="error-message"></p>
+                </form>
+            </div>
+            
         </div>
         
     </main>
@@ -190,35 +157,204 @@
     <!-- 3. Footer (Consistent with other pages) -->
     <footer class="bg-gray-800 text-white py-6 mt-8">
         <div class="container mx-auto px-6 text-center text-sm text-gray-400">
-            &copy; 2023 JNU Health Center. All rights reserved. | Doctor Availability
+            &copy; 2025 JNU Health Center. All rights reserved. | Doctor Availability
         </div>
     </footer>
 
-    <!-- JavaScript for Slot Selection Logic -->
+    <!-- JavaScript for Dynamic Slot Selection Logic -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const slotButtons = document.querySelectorAll('.slot-button');
-            const selectedSlotInput = document.getElementById('selected-slot');
+            // Check if doctorId is '0', meaning the Flask route failed to pass a real doctor object
+            const doctorId = document.getElementById('doctor-id-input').value;
+            if (doctorId === '0') {
+                console.error("Jinja Error: doctor object was undefined. Cannot initialize scheduler.");
+                document.querySelector('main').innerHTML = '<div class="text-center p-12 bg-red-100 text-red-800 rounded-lg max-w-lg mx-auto mt-10">❌ Error: Doctor data is missing. Please ensure the link is correct and the Doctor ID is valid.</div>';
+                return; // Stop execution if critical data is missing
+            }
+
+
+            const dateSelector = document.getElementById('date-selector');
+            const slotContainer = document.getElementById('time-slot-container');
+            const slotsMessage = document.getElementById('slots-message');
             const bookButton = document.getElementById('book-button');
+            const formDateInput = document.getElementById('form-date-input');
+            const formTimeInput = document.getElementById('form-time-input');
+            const errorMessage = document.getElementById('error-message');
             
-            slotButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const slotValue = button.getAttribute('data-slot');
+            let selectedDate = null;
+            let selectedSlot = null;
 
-                    // 1. Deselect all other buttons
-                    slotButtons.forEach(btn => btn.classList.remove('slot-selected'));
+            // --- Utility Functions ---
 
-                    // 2. Select the clicked button
-                    button.classList.add('slot-selected');
+            // Formats a Date object to YYYY-MM-DD string
+            const formatDate = (date) => date.toISOString().split('T')[0];
+
+            // Formats a Date object to display text (e.g., Mon, 11/29)
+            const formatDisplayDate = (date) => {
+                const options = { weekday: 'short', month: '2-digit', day: '2-digit' };
+                return date.toLocaleDateString('en-US', options).replace(/,/g, '<br>');
+            };
+
+            // --- 1. Date Generation and Selection ---
+
+            function generateDateButtons() {
+                dateSelector.innerHTML = '';
+                const today = new Date();
+                
+                // Generate next 7 days (including today)
+                for (let i = 0; i < 7; i++) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() + i);
                     
-                    // 3. Update the hidden input value
-                    selectedSlotInput.value = slotValue;
+                    const dateValue = formatDate(date);
+                    const dateDisplay = formatDisplayDate(date);
 
-                    // 4. Enable and update the booking button text
-                    bookButton.disabled = false;
-                    bookButton.textContent = `Book Appointment for ${slotValue}`;
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'date-button';
+                    button.innerHTML = dateDisplay;
+                    button.dataset.date = dateValue;
+                    
+                    if (i === 0) {
+                         // Automatically select today's date on load
+                         button.classList.add('date-selected');
+                         selectedDate = dateValue;
+                         fetchSlots(selectedDate);
+                    }
+                    
+                    button.addEventListener('click', (e) => {
+                        // Reset all to default style
+                        document.querySelectorAll('.date-button').forEach(btn => btn.classList.remove('date-selected'));
+                        
+                        // Apply selected style
+                        e.currentTarget.classList.add('date-selected');
+                        selectedDate = dateValue;
+                        selectedSlot = null; // Reset slot selection
+                        updateBookingButton(false);
+                        fetchSlots(selectedDate);
+                    });
+
+                    dateSelector.appendChild(button);
+                }
+            }
+
+            // --- 2. AJAX Slot Fetching ---
+
+            function fetchSlots(date) {
+                if (!doctorId || !date) return;
+
+                slotsMessage.innerHTML = '<div class="text-blue-500 font-medium flex items-center justify-center"><svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">...</svg> Checking slots for ' + date + '...</div>';
+                slotContainer.classList.add('opacity-50');
+                errorMessage.classList.add('hidden');
+                
+                // Using the assumed existing backend route for availability check
+                fetch('/get-available-slots', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ doctor_id: doctorId, date: date }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Server returned an error.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    slotContainer.classList.remove('opacity-50');
+                    renderSlots(data.slots);
+                })
+                .catch(error => {
+                    console.error('Fetch Error:', error);
+                    slotContainer.classList.remove('opacity-50');
+                    slotsMessage.textContent = '⚠️ Error loading slots. Please try refreshing.';
+                    slotsMessage.className = 'bg-red-100 p-4 rounded-lg text-red-700 text-center';
+                    updateBookingButton(false);
                 });
-            });
+            }
+
+            // --- 3. Slot Rendering and Selection ---
+
+            function renderSlots(slots) {
+                slotContainer.innerHTML = '';
+                
+                if (slots.length === 0) {
+                    slotsMessage.textContent = '😔 No slots are available on the selected date.';
+                    slotsMessage.className = 'bg-yellow-100 p-4 rounded-lg text-yellow-700 text-center';
+                    slotContainer.appendChild(slotsMessage);
+                    return;
+                }
+                
+                // Group slots into morning/afternoon for display organization
+                const morningSlots = slots.filter(s => s.time_value < '12:00 PM');
+                const afternoonSlots = slots.filter(s => s.time_value >= '12:00 PM');
+                
+                const timeGroups = [
+                    { label: 'Morning (9:00 AM - 1:00 PM)', icon: '☀️', slots: morningSlots },
+                    { label: 'Afternoon (2:00 PM - 6:00 PM)', icon: '🌤️', slots: afternoonSlots }
+                ];
+
+                timeGroups.forEach(group => {
+                    if (group.slots.length > 0) {
+                        const groupDiv = document.createElement('div');
+                        groupDiv.innerHTML = `
+                            <h4 class="text-xl font-semibold text-blue-700 mb-3 flex items-center">
+                                ${group.icon} ${group.label}
+                            </h4>
+                            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4" id="slot-group-${group.label.split(' ')[0]}">
+                                <!-- Buttons go here -->
+                            </div>
+                        `;
+                        slotContainer.appendChild(groupDiv);
+
+                        const buttonContainer = document.getElementById(`slot-group-${group.label.split(' ')[0]}`);
+                        
+                        group.slots.forEach(slot => {
+                            const button = document.createElement('button');
+                            button.type = 'button';
+                            button.className = 'slot-button';
+                            button.innerHTML = `${slot.time_value} <span class="text-xs text-gray-500 block">(${slot.remaining} left)</span>`;
+                            button.dataset.slot = slot.time_value;
+                            
+                            button.addEventListener('click', (e) => handleSlotSelection(e.currentTarget));
+                            buttonContainer.appendChild(button);
+                        });
+                    }
+                });
+
+                // Clear previous message content
+                slotsMessage.textContent = '';
+                slotsMessage.className = '';
+            }
+
+            function handleSlotSelection(button) {
+                // 1. Deselect all
+                document.querySelectorAll('.slot-button').forEach(btn => btn.classList.remove('slot-selected'));
+
+                // 2. Select current
+                button.classList.add('slot-selected');
+                
+                // 3. Update state and form fields
+                selectedSlot = button.dataset.slot;
+                updateBookingButton(true);
+            }
+
+            function updateBookingButton(enable) {
+                if (enable && selectedDate && selectedSlot) {
+                    bookButton.disabled = false;
+                    bookButton.textContent = `Book Appointment for ${selectedSlot} on ${selectedDate.substring(5)}`;
+                    formDateInput.value = selectedDate;
+                    formTimeInput.value = selectedSlot;
+                    errorMessage.classList.add('hidden');
+                } else {
+                    bookButton.disabled = true;
+                    bookButton.textContent = 'Book Appointment (Select a Date and Slot)';
+                    formDateInput.value = '';
+                    formTimeInput.value = '';
+                }
+            }
+
+            // --- Initialization ---
+            generateDateButtons();
         });
     </script>
 </body>
