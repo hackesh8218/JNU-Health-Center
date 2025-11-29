@@ -136,7 +136,7 @@
                     <!-- Date -->
                     <div>
                         <label class="form-label">Appointment Date</label>
-                        <input type="date" name="date" class="input-box" required>
+                        <input type="date" name="date" class="input-box" id="appointmentDate" required> 
                     </div>
 
                     <!-- Time -->
@@ -144,13 +144,8 @@
                         <label class="form-label">Time Slot</label>
                         <select name="time" class="input-box" required>
                             <option value="">-- Select Time --</option>
-                            <option value="09:00 AM">09:00 AM</option>
-                            <option value="10:00 AM">10:00 AM</option>
-                            <option value="11:00 AM">11:00 AM</option>
-                            <option value="12:00 PM">12:00 PM</option>
-                            <option value="02:00 PM">02:00 PM</option>
-                            <option value="03:00 PM">03:00 PM</option>
-                            <option value="04:00 PM">04:00 PM</option>
+                            <option value="09:00 AM">09:00 AM - 01:00 PM</option>
+                            <option value="02:00 PM">02:00 PM - 06:00 PM</option>
                         </select>
                     </div>
                 </div>
@@ -172,6 +167,26 @@
 
 <!-- AJAX SCRIPT -->
 <script>
+  
+    // 1. Get the date input element using its ID
+    const dateInput = document.getElementById('appointmentDate');
+
+    // 2. Create a new Date object for the current moment
+    const today = new Date();
+
+    // 3. Extract the year, month, and day
+    const year = today.getFullYear();
+    // Months are 0-indexed (January is 0). Add 1 to get the correct month number.
+    const month = String(today.getMonth() + 1).padStart(2, '0'); 
+    const day = String(today.getDate()).padStart(2, '0');
+
+    // 4. Format the date into the 'YYYY-MM-DD' string format, 
+    // which is required for the <input type="date"> min attribute
+    const minDate = `${year}-${month}-${day}`;
+
+    // 5. Set the min attribute on the date input
+    dateInput.min = minDate;
+
     document.getElementById("departmentSelect").addEventListener("change", function () {
         const deptId = this.value;
         const doctorDropdown = document.getElementById("doctorSelect");
