@@ -310,6 +310,50 @@
     doctorSelect.addEventListener('change', checkAvailability);
     dateInput.addEventListener('change', checkAvailability);
     timeSlotSelect.addEventListener('change', checkAvailability);
+    // In new_appointment.html script block:
 
+// Attach this function to change events on doctorSelect and appointmentDate
+doctorSelect.addEventListener('change', loadTimeSlots);
+dateInput.addEventListener('change', loadTimeSlots);
+
+function loadTimeSlots() {
+    const doctorId = doctorSelect.value;
+    const date = dateInput.value;
+    const timeSlotSelect = document.getElementById('timeSlotSelect');
+    
+    // Reset and disable time slot select
+    timeSlotSelect.innerHTML = "<option value=''>-- Select Time --</option>";
+    timeSlotSelect.disabled = true;
+
+    if (!doctorId || !date) return;
+
+    // Show checking status (optional UI update here)
+    // ...
+
+    fetch('/get-available-slots', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ doctor_id: doctorId, date: date }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        timeSlotSelect.disabled = false;
+        
+        if (data.slots && data.slots.length > 0) {
+            data.slots.forEach(slot => {
+                const option = document.createElement('option');
+                option.value = slot.time_value;
+                option.textContent = `${slot.time_label} (${slot.remaining} slots left)`;
+                timeSlotSelect.appendChild(option);
+            });
+        } else {
+            timeSlotSelect.innerHTML = "<option value=''>-- No Slots Available --</option>";
+        }
+    })
+    .catch(error => {
+        console.error('Error loading time slots:', error);
+        timeSlotSelect.innerHTML = "<option value=''>-- Error Loading Slots --</option>";
+    });
+}
 </script>
 </html>

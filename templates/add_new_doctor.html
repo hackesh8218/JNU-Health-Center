@@ -163,9 +163,29 @@
                         
                         <!-- Availability (Optional) -->
                         <div class="md:col-span-2">
-                            <label for="avl" class="block text-sm font-medium text-gray-700 mb-1">Initial Availability (Optional)</label>
-                            <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                   id="avl" name="availability" placeholder="e.g., Mon-Fri, 9:00 AM - 5:00 PM">
+                            <h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Weekly Availability Schedule</h4>
+                            <p class="text-sm text-gray-500 mb-3">Select the day(s) and time slot(s) the doctor is available.</p>
+
+                            <div class="flex flex-wrap gap-x-6 gap-y-2 mb-4 p-3 border rounded-lg bg-white">
+                                {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+                                {% for day in days %}
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="{{ day }}" name="available_days" value="{{ day }}" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                        <label for="{{ day }}" class="ml-2 text-sm text-gray-700">{{ day }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="flex flex-wrap gap-x-6 gap-y-2 p-3 border rounded-lg bg-white">
+                                <h5 class="w-full text-sm font-medium text-gray-700 mb-1">Select Time Slot(s):</h5>
+                                {% set slots = [('09:00 AM', '09:00 AM - 01:00 PM'), ('02:00 PM', '02:00 PM - 06:00 PM')] %}
+                                {% for value, label in slots %}
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="time-{{ value }}" name="available_slots" value="{{ value }}" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                        <label for="time-{{ value }}" class="ml-2 text-sm text-gray-700">{{ label }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
 
                     </div>

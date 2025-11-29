@@ -14,7 +14,7 @@ from flask import jsonify
 from datetime import date
 
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import User, Department, Doctor, Appointment, Treatment, Feedback,PatientHistory
+from .models import User, Department, Doctor, Appointment, Treatment, Feedback,PatientHistory, DoctorAvailability
 from .database import db
 from datetime import datetime
 #current_app refers to app object that we create 
@@ -97,57 +97,81 @@ def request_history(appointment_id):
 
 
 
+from flask import request, redirect, url_for, flash, render_template, session
+# Import your models: db, User, Doctor, Department, and DoctorAvailability
+# from .models import db, User, Doctor, Department, DoctorAvailability 
+# from werkzeug.security import generate_password_hash # Recommended for password hashing
+
 @app.route("/add-doctor", methods=["GET", "POST"])
 def add_doctor():
-    # Restrict access to admin only
+    # 1. Access Restriction
     if session.get('role') != 'admin':
         flash("Only Admin can add new doctors.", "danger")
         return redirect(url_for('login'))
 
-    # Get department list for dropdown
     departments = Department.query.all()
 
     if request.method == "POST":
+        # 2. Extract Data
         name = request.form.get('name')
         email = request.form.get('email')
-        password = request.form.get('password')
-        dept_id = request.form.get('dept_id')
+        password = request.form.get('password') # Remember to HASH this!
+        dept_id = request.form.get('dept_id', type=int)
         specialization = request.form.get('specialization')
-        availability = request.form.get('availability')
-
-        # ✅ Validate required fields
+        
+        # NEW: Get list of selected days and time slots
+        available_days = request.form.getlist('available_days')
+        available_slots = request.form.getlist('available_slots')
+        
+        # 3. Basic Validation (Availability is now optional until the final step)
         if not all([name, email, password, dept_id, specialization]):
             flash("⚠️ Please fill all required fields.", "warning")
             return render_template("add_new_doctor.html", departments=departments)
 
-        # ✅ Check if email already exists
+        # Check if email already exists
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
             flash("❌ Doctor with this email already exists!", "danger")
             return render_template("add_new_doctor.html", departments=departments)
 
         try:
-            # ✅ Create new User
+            # Hash the password before saving (Security Best Practice)
+            # hashed_password = generate_password_hash(password)
+
+            # 4. Create new User
+            # Assuming your User model handles the 'name' field if necessary
             new_user = User(name=name, email=email, password=password, role="doctor")
             db.session.add(new_user)
-            db.session.commit()
+            db.session.flush() # Get user_id before committing the whole transaction
 
-            # ✅ Create Doctor profile
+            # 5. Create Doctor profile
             new_doctor = Doctor(
                 name=name,
                 email=email,
-                password=password,
-                dept_id=int(dept_id),
+                password=password, # Use the password variable, hashed version preferred
+                dept_id=dept_id,
                 specialization=specialization,
-                availability=availability,
+                # NOTE: 'availability' column has been removed/ignored based on previous steps
                 user_id=new_user.user_id
             )
             db.session.add(new_doctor)
-            db.session.commit()
+            db.session.flush() # Get doctor_id
 
-            # ✅ Flash success message & reload same page
-            flash("✅ Doctor added successfully!", "success")
-            return redirect(url_for('add_doctor'))  # ✅ stay on same route, show message
+            # 6. Create DoctorAvailability Records (NEW LOGIC)
+            if available_days and available_slots:
+                for day in available_days:
+                    for slot in available_slots:
+                        new_schedule_slot = DoctorAvailability(
+                            doctor_id=new_doctor.doctor_id,
+                            day_of_week=day,
+                            time_slot=slot
+                        )
+                        db.session.add(new_schedule_slot)
+            
+            # 7. Commit everything
+            db.session.commit()
+            flash("✅ Doctor and schedule successfully added!", "success")
+            return redirect(url_for('add_doctor')) 
 
         except Exception as e:
             db.session.rollback()
@@ -159,6 +183,9 @@ def add_doctor():
 
 
 
+
+from flask import request, redirect, url_for, flash
+# from .models import db, Doctor, DoctorAvailability, User # Ensure DoctorAvailability is imported
 
 
 
@@ -538,7 +565,7 @@ from sqlalchemy import func
 
 # --- CONFIGURATION CONSTANT ---
 # Define the maximum number of appointments allowed for any slot
-MAX_APPOINTMENTS_PER_SLOT = 5
+# MAX_APPOINTMENTS_PER_SLOT = 5
 
 @app.route("/new-appointment", methods=["GET", "POST"])
 def new_appointment():
@@ -660,6 +687,91 @@ def check_availability():
         # Log the error for debugging purposes
         print(f"Error checking availability: {e}")
         return jsonify({"error": "An internal server error occurred during check."}), 500
+    
+from datetime import datetime
+# from .models import db, Appointment, DoctorAvailability
+from flask import request, jsonify
+from datetime import datetime
+# Assuming db, Appointment, DoctorAvailability are imported from your models file
+
+MAX_APPOINTMENTS_PER_SLOT = 5
+
+@app.route('/get-available-slots', methods=['POST'])
+def get_available_slots():
+    """
+    Checks doctor's scheduled availability and current booking capacity 
+    for a specific date.
+    """
+    try:
+        # CRITICAL: Attempt to get JSON data
+        data = request.get_json()
+        
+        # Check if JSON payload was correctly received
+        if not data:
+            print("ERROR: Request body is missing or not valid JSON.")
+            return jsonify({"slots": [], "error": "Invalid request format. Must be JSON."}), 400
+        
+        doctor_id = data.get('doctor_id')
+        date_str = data.get('date') 
+        
+        # 1. Validation check
+        if not doctor_id or not date_str:
+            return jsonify({"slots": [], "error": "Doctor and date required."}), 400
+            
+        # Ensure doctor_id is an integer for the query
+        doctor_id = int(doctor_id)
+        
+        # Convert Date string to Day of Week and date object
+        appointment_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        day_name = appointment_date.strftime('%A') 
+
+        # 2. Get the Doctor's Scheduled Slots for that Day (from DoctorAvailability model)
+        scheduled_slots = DoctorAvailability.query.filter_by(
+            doctor_id=doctor_id, 
+            day_of_week=day_name
+        ).all()
+        
+        if not scheduled_slots:
+            # Doctor is not scheduled to work on this specific day of the week
+            return jsonify({"slots": []})
+
+        available_slots = []
+
+        # 3. For each scheduled slot, check the booking count (from Appointment model)
+        for slot in scheduled_slots:
+            time_slot_value = slot.time_slot
+            
+            booked_count = db.session.query(Appointment).filter(
+                Appointment.doctor_id == doctor_id,
+                Appointment.date == appointment_date,
+                Appointment.time == time_slot_value
+            ).count()
+            
+            remaining = MAX_APPOINTMENTS_PER_SLOT - booked_count
+            
+            # Only show the slot if it has capacity (remaining > 0)
+            if remaining > 0:
+                # Determine display label based on the stored value (09:00 AM or 02:00 PM)
+                display_label = f"{time_slot_value} - { '01:00 PM' if time_slot_value == '09:00 AM' else '06:00 PM'}"
+
+                available_slots.append({
+                    'time_value': time_slot_value,
+                    'time_label': display_label,
+                    'remaining': remaining
+                })
+        
+        return jsonify({"slots": available_slots})
+    
+    except ValueError as ve:
+        # Catches errors like invalid date format (if date_str is bad) or doctor_id conversion
+        print(f"DATA CONVERSION ERROR in /get-available-slots: {ve}")
+        return jsonify({"slots": [], "error": "Invalid data submitted (e.g., date format)."}), 400
+
+    except Exception as e:
+        # Catches unexpected server crashes (e.g., database connection errors, SQLAlchemy issues)
+        print(f"SERVER CRASH in /get-available-slots: {e}")
+        # Return a 500 status to the client
+        return jsonify({"slots": [], "error": "Internal Server Error."}), 500
 
 @app.route("/get-doctors/<int:dept_id>", methods=["GET"])
 def get_doctors(dept_id):

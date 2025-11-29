@@ -67,19 +67,19 @@ class Doctor(db.Model):
     password = db.Column(db.String(100), nullable=False)
     dept_id = db.Column(db.Integer, db.ForeignKey('department.dept_id'), nullable=False)
     specialization = db.Column(db.String(100), nullable=False)
-    availability = db.Column(db.String(100), nullable=True)
+    # availability = db.Column(db.String(100), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False,unique=True)
 
     user = db.relationship('User', backref=db.backref('doctor_profile', uselist=False))
     department = db.relationship('Department', backref=db.backref('doctors', lazy=True))
 
-    def __init__(self, name, email, password, dept_id, specialization, availability, user_id):
+    def __init__(self, name, email, password, dept_id, specialization, user_id):
         self.name = name
         self.email = email
         self.password = password
         self.dept_id = dept_id
         self.specialization = specialization
-        self.availability = availability
+        # self.availability = availability
         self.user_id = user_id
     def to_dict(self):
         return {
@@ -88,7 +88,35 @@ class Doctor(db.Model):
             'specialization': self.specialization,
             'email': self.email
         }
+# In your models.py file
+# In your models.py file, modify the Doctor class
 
+
+class DoctorAvailability(db.Model):
+    __tablename__ = 'doctor_availability'
+    
+    # Primary Key
+    availability_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    
+    # Link to the Doctor
+    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.doctor_id'), nullable=False)
+    
+    # Store the Day of the Week (e.g., 'Monday', 'Tuesday')
+    day_of_week = db.Column(db.String(10), nullable=False)
+    
+    # Store the Time Slot value (e.g., '09:00 AM' - same as in appointment form)
+    time_slot = db.Column(db.String(20), nullable=False)
+    
+    # Define relationship
+    doctor = db.relationship('Doctor', backref=db.backref('schedule', lazy=True))
+
+    # Optional: Add a unique constraint to prevent duplicate slots for the same doctor
+    __table_args__ = (
+        db.UniqueConstraint('doctor_id', 'day_of_week', 'time_slot', name='_doctor_slot_uc'),
+    )
+
+    def __repr__(self):
+        return f"<DoctorAvailability {self.doctor_id} - {self.day_of_week} {self.time_slot}>"
 # ============================================================
 # 5️⃣ APPOINTMENT MODEL
 # ============================================================
