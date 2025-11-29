@@ -530,39 +530,136 @@ def search():
 
 from datetime import datetime
 
+from flask import request, redirect, url_for, flash, render_template, session
+from datetime import datetime
+from sqlalchemy import func
+# Assuming your models are defined and imported (db, Appointment, User, Department)
+# from .models import db, Appointment, User, Department 
+
+# --- CONFIGURATION CONSTANT ---
+# Define the maximum number of appointments allowed for any slot
+MAX_APPOINTMENTS_PER_SLOT = 5
+
 @app.route("/new-appointment", methods=["GET", "POST"])
 def new_appointment():
+    # 1. Authentication Check
     if "user_id" not in session:
-        return redirect("/login")
+        flash("Please log in to book an appointment.", "danger")
+        return redirect(url_for("login")) # Use url_for for redirects
 
+    # Retrieve the currently logged-in user
     user = User.query.get(session["user_id"])
 
     if request.method == "POST":
-        doctor_id = request.form["doctor_id"]
-        user_id = request.form["user_id"]
-        
-        # Convert HTML date string to Python date object
-        date_str = request.form["date"]
-        date = datetime.strptime(date_str, "%Y-%m-%d").date()
-        
-        time = request.form["time"]
+        try:
+            # 2. Extract and Validate Form Data
+            doctor_id = request.form.get("doctor_id", type=int)
+            # Use user from session for security, not hidden form field
+            user_id = session["user_id"] 
+            
+            date_str = request.form["date"]
+            # Convert HTML date string to Python date object
+            appointment_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+            
+            time_slot = request.form["time"]
 
-        new_appt = Appointment(
-            doctor_id=doctor_id,
-            user_id=user_id,
-            date=date,
-            time=time,
-            status="Booked"
-        )
+            if not all([doctor_id, appointment_date, time_slot]):
+                 flash("Missing appointment details. Please fill all fields.", "danger")
+                 return redirect(url_for("new_appointment"))
+            
+            # 3. CRUCIAL: Final Server-Side Capacity Check
+            # Count how many appointments already exist for this doctor, date, and time slot
+            booked_count = db.session.query(Appointment).filter(
+                Appointment.doctor_id == doctor_id,
+                Appointment.date == appointment_date, 
+                Appointment.time == time_slot
+                # Optional: Filter out 'Cancelled' appointments if you allow re-booking
+                # Appointment.status != 'Cancelled' 
+            ).count()
 
-        db.session.add(new_appt)
-        db.session.commit()
-        flash("✅ Appointment successfully!", "success")
-        return redirect("/new-appointment")
+            if booked_count >= MAX_APPOINTMENTS_PER_SLOT:
+                # Limit reached, roll back any implicit transaction and reject booking
+                flash(f"❌ This time slot ({time_slot}) is fully booked (Limit: {MAX_APPOINTMENTS_PER_SLOT}). Please choose another time or date.", "danger")
+                return redirect(url_for("new_appointment")) 
 
+            # 4. Create and Commit New Appointment (If limit not reached)
+            new_appt = Appointment(
+                doctor_id=doctor_id,
+                user_id=user_id,
+                date=appointment_date,
+                time=time_slot, # Use the descriptive variable name
+                status="Booked"
+            )
+
+            db.session.add(new_appt)
+            db.session.commit()
+            
+            flash("✅ Appointment successfully booked!", "success")
+            return redirect(url_for("patient_dash")) # Redirect to dashboard after successful booking
+
+        except ValueError:
+            # Handle error if date format is incorrect or doctor_id/user_id conversion fails
+            flash("Invalid date or form submission error.", "danger")
+            db.session.rollback()
+            return redirect(url_for("new_appointment"))
+            
+        except Exception as e:
+            # General error handling
+            db.session.rollback()
+            print(f"Booking Error: {e}")
+            flash("An unexpected error occurred. Please try again.", "danger")
+            return redirect(url_for("new_appointment"))
+
+    # GET Request Logic: Render the form
     departments = Department.query.all()
+    # Ensure you are passing the correct variables expected by your template
     return render_template("new_appointment.html", departments=departments, user=user)
 
+@app.route('/check-availability', methods=['POST'])
+def check_availability():
+    """
+    Checks the current number of bookings for a specific doctor, date, and time slot.
+    Returns JSON status to the client-side JavaScript.
+    """
+    try:
+        data = request.get_json()
+        doctor_id = data.get('doctor_id')
+        date_str = data.get('date') # Date is received as a string 'YYYY-MM-DD'
+        time_slot = data.get('time')
+        
+        # 1. Validation check
+        if not all([doctor_id, date_str, time_slot]):
+            return jsonify({"error": "Missing required data for check."}), 400
+
+        # Convert doctor_id to integer (it comes as string from JavaScript/JSON)
+        doctor_id = int(doctor_id)
+
+        # 2. Database Query
+        # We query the Appointment model using the submitted criteria
+        booked_count = db.session.query(Appointment).filter(
+            Appointment.doctor_id == doctor_id,
+            Appointment.date == date_str, # SQLAlchemy handles comparison with string 'YYYY-MM-DD'
+            Appointment.time == time_slot
+        ).count()
+
+        # 3. Determine availability based on the constant limit
+        is_available = booked_count < MAX_APPOINTMENTS_PER_SLOT
+        remaining_slots = MAX_APPOINTMENTS_PER_SLOT - booked_count
+        
+        # Ensure remaining_slots is not negative
+        if remaining_slots < 0:
+            remaining_slots = 0
+
+        # 4. Return result as JSON
+        return jsonify({
+            "is_available": is_available,
+            "remaining_slots": remaining_slots
+        })
+
+    except Exception as e:
+        # Log the error for debugging purposes
+        print(f"Error checking availability: {e}")
+        return jsonify({"error": "An internal server error occurred during check."}), 500
 
 @app.route("/get-doctors/<int:dept_id>", methods=["GET"])
 def get_doctors(dept_id):
