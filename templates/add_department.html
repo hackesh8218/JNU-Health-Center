@@ -86,11 +86,16 @@
                 <h1 class="text-3xl font-extrabold text-blue-800">New Department Setup</h1>
             </div>
 
-            <!-- Back Button -->
-            <a href="{{ url_for('admin_dash') }}" class="btn-back">
-                <span>Back to Dashboard</span>
-            </a>
-        </div>
+              <!-- Go Back Button -->
+                <div class="text-center pt-6">
+                    <a href="{{ url_for('admin_dash') }}" 
+                      class="inline-block bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold 
+                              px-5 py-2 rounded-lg shadow-md
+                              transform transition duration-300 ease-in-out
+                              hover:from-orange-600 hover:to-red-700 hover:scale-105 hover:shadow-lg">
+                        ⬅️ Go Back to Dashboard
+                    </a>
+                </div>
     </header>
 
     <!-- 2. Main Content Layout -->
@@ -119,7 +124,13 @@
 
                 <!-- Submit Button -->
                 <div class="text-center pt-6">
-                    <input type="submit" class="btn-submit" value="Create Department">
+                    
+                    <button 
+                        class="btn-primary bg-red-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md 
+                              transform transition duration-300 ease-in-out 
+                              hover:bg-red-700 hover:scale-105 hover:shadow-lg">
+                            <input type="submit" class="btn-submit" value="Create Department">
+                    </button>
                 </div>
                 
             </form>

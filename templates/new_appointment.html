@@ -91,10 +91,13 @@
 
     <header class="bg-white shadow-lg p-5 flex justify-between items-center">
         <h1 class="text-3xl font-extrabold text-blue-800">Book New Appointment</h1>
-        <a href="{{ url_for('patient_dash') }}" class="btn-back flex items-center space-x-2">
-            <span>&larr;</span>
-            <span>Back to Dashboard</span>
-        </a>
+        <a href="{{ url_for('patient_dash') }}" 
+                      class="inline-block bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold 
+                              px-5 py-2 rounded-lg shadow-md
+                              transform transition duration-300 ease-in-out
+                              hover:from-orange-600 hover:to-red-700 hover:scale-105 hover:shadow-lg">
+                        ⬅️ Go Back to Dashboard
+                    </a>
     </header>
 
     <main class="flex-grow container mx-auto p-6">
@@ -149,7 +152,10 @@
                 <div id="availabilityStatus" class="p-3 rounded-lg text-sm font-medium hidden"></div>
 
                 <div class="pt-4">
-                    <button type="submit" class="btn-primary w-full shadow-xl" id="bookButton" disabled>
+                    <button 
+                    class="btn-primary bg-red-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md 
+                          transform transition duration-300 ease-in-out 
+                          hover:bg-red-700 hover:scale-105 hover:shadow-lg">
                         Book Appointment
                     </button>
                 </div>
