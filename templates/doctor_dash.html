@@ -126,7 +126,7 @@
         </div>
 
         <!-- Tables and Patient Lists -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- <div class="grid grid-cols-1 lg:grid-cols-3 gap-8"> -->
 
             <!-- Upcoming Appointments (2/3 width) -->
             <div class="bg-white p-6 rounded-2xl shadow-xl lg:col-span-2">
@@ -138,6 +138,7 @@
                             <tr>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Appt. ID</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -149,6 +150,7 @@
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-4 py-4">{{ appt.appointment_id }}</td>
                                 <td class="px-4 py-4">{{ appt.user.name }}</td>
+                                <td class="px-4 py-4">{{ appt.doctor.department.name }}</td>
                                 <td class="px-4 py-4">
                                     {{ appt.date }} {{ appt.time }}
                                 </td>
@@ -182,10 +184,6 @@
                     <p>No upcoming appointments. Enjoy your quiet time!</p>
                 </div>
             </div>
-
-
-        </div>
-
     </main>
 
     <!-- Footer -->
