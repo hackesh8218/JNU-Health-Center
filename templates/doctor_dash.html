@@ -62,14 +62,22 @@
         </div>
         <div class="flex items-center space-x-6">
     
-        <div class="bg-blue-600 px-6 py-3 rounded-lg shadow-xl transform hover:scale-[1.02] transition duration-300 ease-in-out cursor-pointer">
-            
-                <span class="text-xl md:text-2xl lg:text-3xl font-extrabold text-white leading-none tracking-wide">
-                    Dr. {{ this_user.name }}
-                </span>
-                
-            </div>
-        </div>
+                <!-- Welcome Header -->
+        <div class="flex items-center justify-between bg-gradient-to-r from-blue-600 to-indigo-700 
+                    px-6 py-4 rounded-lg shadow-xl transform hover:scale-[1.01] transition duration-300 ease-in-out">
+
+            <!-- Welcome Text -->
+            <span class="text-xl md:text-2xl lg:text-3xl font-extrabold text-white leading-none tracking-wide">
+                👋 Welcome, Dr. {{ this_user.name }}
+            </span>
+
+            <!-- Logout Button -->
+            <a href="/logout" 
+              class="ml-4 bg-red-500 text-white font-semibold px-4 py-2 rounded-md shadow-md 
+                      transition duration-300 ease-in-out hover:bg-red-600 hover:shadow-lg">
+                Log Out
+            </a>
+          </div>
     </header>
 
     <!-- Custom Modal for Confirmation -->
@@ -134,11 +142,6 @@
             </a>
 
         </div>
-
-        <!-- Tables and Patient Lists -->
-        <!-- <div class="grid grid-cols-1 lg:grid-cols-3 gap-8"> -->
-
-            <!-- Upcoming Appointments (2/3 width) -->
             <div class="bg-white p-6 rounded-2xl shadow-xl lg:col-span-2">
                 <h3 class="text-2xl font-bold text-blue-800 mb-6 border-b pb-3 border-blue-100">Upcoming Appointments</h3>
 
@@ -170,13 +173,13 @@
                                       View/Update
                                   </a>
 
-                                  <form action="/cancel-appointment/{{ appt.appointment_id }}" method="POST" style="display:inline;">
+                                  <!-- <form action="/cancel-appointment/{{ appt.appointment_id }}" method="POST" style="display:inline;">
                                       <button type="submit" 
                                               class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out"
                                               onclick="return confirm('Are you sure you want to cancel this appointment?');">
                                           Cancel
                                       </button>
-                                  </form>
+                                  </form> -->
                               </td>
                                                           </tr>
                             {% endfor %}

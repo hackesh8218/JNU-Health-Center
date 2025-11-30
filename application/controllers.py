@@ -235,7 +235,7 @@ def doctor_profile():
 
 @app.route("/patient-dash")
 def patient_dash():
-
+    role=session.get("role")
     if session.get("role") != "patient":
         flash("Unauthorized access.", "danger")
         return redirect(url_for("login"))
@@ -255,9 +255,10 @@ def patient_dash():
         "patient_dash.html",
         this_user=this_user,
         appointments=appointments,
-        departments=departments
+        departments=departments,
+        role=role
     )
-
+# Example: inside your Flask route
 
 
 
@@ -274,7 +275,7 @@ def doctor_dash():
     if session.get("role") != "doctor":
         # flash("Access denied!", "danger")
         return redirect(url_for("welcome"))
-
+    role=session.get("role")
     user_id = session.get("user_id")
 
     this_user = User.query.get(user_id)
@@ -336,7 +337,8 @@ def doctor_dash():
 
         # Logged-in doctor
         doctor=doctor,
-        this_user=this_user
+        this_user=this_user,
+        role=role
     )
 
 @app.route("/",methods =["GET","POST"])
@@ -407,7 +409,7 @@ def doctor_avail():
    
 @app.route("/logout",methods=["GET","POST"])
 def logout():
-   return render_template("doctor_login.html")
+   return render_template("welcome.html")
 
 @app.route("/cancel-appointment/<int:appt_id>", methods=["POST","GET"])
 def cancel_appointment(appt_id):
@@ -513,7 +515,7 @@ def is_role(expected_role):
 
 @app.route("/admin-dash")
 def admin_dash():
-
+    role=session.get("role")
     if not is_role('admin'):
         flash("Unauthorized access.", "danger")
         return redirect(url_for('login'))
@@ -558,6 +560,7 @@ def admin_dash():
         patient_list=patient_list,
         appointment_list=upcoming_appts,
         department_list=departments_list,
+        role=role,
         department_count=department_count   # <-- ADDED
     )
 
