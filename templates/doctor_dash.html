@@ -65,7 +65,7 @@
         <div class="bg-blue-600 px-6 py-3 rounded-lg shadow-xl transform hover:scale-[1.02] transition duration-300 ease-in-out cursor-pointer">
             
                 <span class="text-xl md:text-2xl lg:text-3xl font-extrabold text-white leading-none tracking-wide">
-                    {{ this_user.name }}
+                    Dr. {{ this_user.name }}
                 </span>
                 
             </div>
@@ -88,48 +88,41 @@
     <div id="message-box" class="fixed top-5 right-5 z-50 p-4 rounded-xl shadow-xl text-white font-semibold transition-opacity duration-300 opacity-0 transform translate-x-10" style="display: none;">
         Message content here.
     </div>
-
-    <!-- Main Content -->
     <main class="flex-grow container mx-auto px-4 sm:px-6 py-10">
+       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-600 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Today's Appointments</p>
+                    <p class="text-3xl font-bold text-blue-800 mt-1">{{  todays_count | default(0) }}</p>
+                </div>
+                <i class="fas fa-users text-4xl text-blue-500 opacity-30"></i>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-green-600 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Total Appointments</p>
+                    <p class="text-3xl font-bold text-green-800 mt-1">{{ total_patients | default(0) }}</p>
+                </div>
+                <i class="fas fa-user-md text-4xl text-green-500 opacity-30"></i>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-600 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Treated Patients</p>
+                    <p class="text-3xl font-bold text-purple-800 mt-1">{{ department_count | default(8) }}</p>
+                </div>
+                <i class="fas fa-hospital text-4xl text-purple-500 opacity-30"></i>
+            </div>
 
-        <!-- Stats Cards (Counting Section) -->
-        <h2 class="text-2xl font-bold text-gray-700 mb-6">Key Statistics</h2>
+          </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-
-            <!-- Today's Appointments -->
-            <div class="stat-card border-blue-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-md text-gray-500 font-medium">Today's Appointments</p>
-                        <p class="text-4xl font-extrabold text-blue-800 mt-1">{{ todays_count }}</p>
-                    </div>
-                    <div class="stat-icon bg-blue-100 text-blue-600">
-                        <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-4 9H9m5-1c3.866 0 7-1.343 7-3s-3.134-3-7-3-7 1.343-7 3 3.134 3 7 3zm0 0v-2.143m0 0a3 3 0 00-3-3m3 3a3 3 0 013-3m-6 3h6"></path></svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Total Assigned Patients -->az
-            <div class="stat-card border-orange-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-md text-gray-500 font-medium">Total Assigned Patients</p>
-                        <p class="text-4xl font-extrabold text-orange-600 mt-1">{{ total_patients }}</p>
-                    </div>
-                    <div class="stat-icon bg-orange-100 text-orange-600">
-                        <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6m-6 0h-2m2 0v-2m-2 2h2m-2 0v-2"></path></svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Availability Status & Action -->
-            <div class="stat-card border-green-500 flex flex-col justify-center">
-                <p class="text-md text-gray-500 font-medium">Current Status</p>
-                <button onclick="window.location.href='/doctor-avail'" 
-                        class="btn-primary bg-green-600 hover:bg-green-700 px-4 py-2">
-                    Set Availability
+            <a href="{{ url_for('doctor_avail', doctor_id=doctor.doctor_id) }}" 
+              class="stat-card border-red-500 flex flex-col justify-center">
+                <button 
+                    class="btn-primary bg-red-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md 
+                          transform transition duration-300 ease-in-out 
+                          hover:bg-red-700 hover:scale-105 hover:shadow-lg">
+                    Get Availability Status
                 </button>
-            </div>
+            </a>
         </div>
 
         <!-- Tables and Patient Lists -->
@@ -190,17 +183,6 @@
                 </div>
             </div>
 
-            <!-- Assigned Patients List (1/3 width) -->
-            <div class="bg-white p-6 rounded-2xl shadow-xl lg:col-span-1">
-                <h3 class="text-2xl font-bold text-blue-800 mb-6 border-b pb-3 border-blue-100">Assigned Patients Summary</h3>
-                
-                <ul id="assigned-patients-list" class="space-y-4">
-                    <!-- Patient names injected here -->
-                </ul>
-                <div id="no-assigned-patients-message" class="text-center py-5 text-gray-500 hidden">
-                    <p>No patients currently assigned to you.</p>
-                </div>
-            </div>
 
         </div>
 

@@ -173,41 +173,21 @@
     Browse Departments
   </h3>
 
-  <!-- Color map for Tailwind (STATIC classes required) -->
-  {% set color_map = {
-    "Cardiology": "red-500",
-    "Pathology": "green-500",
-    "Psychiatry": "purple-500",
-    "Orthopedics": "yellow-500",
-    "Dermatology": "pink-500",
-    "General Surgery": "indigo-500",
-    "Gastroenterology": "blue-500",
-    "Pulmonology": "cyan-500",
-    "Neurology": "emerald-500"
-  } %}
 
-  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-
-    {% for dept in departments %}
-      <a href="/doctor-dept?name={{ dept.name }}"
-         class="bg-white p-6 rounded-2xl shadow-md text-center hover:shadow-xl
-                transition-all duration-300 border-b-4 transform hover:-translate-y-1
-                border-{{ color_map[dept.name] }}">
-        
-        <!-- COLORFUL SQUARE WITH FIRST LETTER -->
-        <div class="mx-auto h-16 w-16 rounded-md flex items-center justify-center
-                    text-white text-3xl font-bold 
-                    bg-{{ color_map[dept.name] }} mb-4">
-          {{ dept.name[0] }}
-        </div>
-
-        <p class="font-semibold text-gray-800 text-base">{{ dept.name }}</p>
-        <p class="text-xs text-gray-500">View Details</p>
-
-      </a>
-    {% endfor %}
-
-  </div>
+ 
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              
+                {% for dept in departments %}
+                <a href="/doctor-dept?name={{dept.name}}",
+                class="bg-purple-50 p-4 rounded-lg shadow-md hover:shadow-lg transition duration-200 border-l-4 border-purple-400">
+                    <p class="text-lg font-bold text-purple-800">{{ dept.dept_id }}</p>
+                    <p class="text-lg font-bold text-purple-800">{{ dept.name }}</p>
+                    <p class="text-lg font-bold text-purple-800">{{ dept.description }}</p>
+               </a>
+                {% else %}
+                <div class="col-span-full p-4 text-center text-gray-500 italic">No department details found.</div>
+                {% endfor %}
+      </div>
 </div>
 
        

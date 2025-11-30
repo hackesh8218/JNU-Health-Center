@@ -71,7 +71,7 @@ def request_history(appointment_id):
     # Load appointment
     appt = Appointment.query.get(appointment_id)
     if not appt:
-        flash("Appointment not found!", "danger")
+        # flash("Appointment not found!", "danger")
         return redirect("/admin-dash")
 
     # Patient (comes from Appointment → user relation)
@@ -106,7 +106,7 @@ from flask import request, redirect, url_for, flash, render_template, session
 def add_doctor():
     # 1. Access Restriction
     if session.get('role') != 'admin':
-        flash("Only Admin can add new doctors.", "danger")
+        # flash("Only Admin can add new doctors.", "danger")
         return redirect(url_for('login'))
 
     departments = Department.query.all()
@@ -183,7 +183,7 @@ def add_doctor():
 
 
 
-
+# 
 from flask import request, redirect, url_for, flash
 # from .models import db, Doctor, DoctorAvailability, User # Ensure DoctorAvailability is imported
 
@@ -272,7 +272,7 @@ def doctor_dash():
         return redirect(url_for("login"))
 
     if session.get("role") != "doctor":
-        flash("Access denied!", "danger")
+        # flash("Access denied!", "danger")
         return redirect(url_for("welcome"))
 
     user_id = session.get("user_id")
@@ -367,7 +367,7 @@ def doctor_login():
             session["role"] = "doctor"
             session["name"] = doctor_user.name
 
-            flash(f"✅ Welcome Dr. {doctor_user.name}!", "success")
+            # flash(f"✅ Welcome Dr. {doctor_user.name}!", "success")
             return redirect(url_for("doctor_dash"))  # ← change route name as per your project
 
         else:
@@ -419,7 +419,7 @@ def cancel_appointment(appt_id):
 
     # Optional: prevent others from canceling others' appointments
     if appointment.user_id != user_id:
-        flash("Unauthorized access", "danger")
+        # flash("Unauthorized access", "danger")
         return redirect("/patient-dash")
 
     db.session.delete(appointment)
@@ -522,6 +522,7 @@ def admin_dash():
     this_user = User.query.get(user_id)
 
     # === Dashboard Counts ===
+    department_count = Department.query.count()
     doctor_count = Doctor.query.count()
     patient_count = User.query.filter_by(role='patient').count()
 
@@ -556,7 +557,8 @@ def admin_dash():
         patient_count=patient_count,
         patient_list=patient_list,
         appointment_list=upcoming_appts,
-        departments_list=departments_list   # <-- ADDED
+        department_list=departments_list,
+        department_count=department_count   # <-- ADDED
     )
 
 
